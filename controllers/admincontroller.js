@@ -1,4 +1,5 @@
 const admin = require("../models/adminmodel");
+const user = require("../models/usermodel");
 const bcrypt = require('bcrypt');
 
 const config = require("../config/config");
@@ -69,8 +70,9 @@ const logout = async(req,res)=>{
 }
 const adminDashboard = async(req,res)=>{
     try{
-        const usersData = user.find({is_admin:0})
-        res.render('users',{user:usersData})
+        const usersData = await user.find({is_admin:0})
+        console.log(usersData.length);
+        res.render('users',{users:usersData})
     }
     catch(error){
         console.log(error.message)

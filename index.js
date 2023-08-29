@@ -45,8 +45,8 @@ app.get('/login',function(req,res){
     app.use('/admin',adminRoute )
 
     //for product routes
-    const productRoute = require('./routes/productroute');
-    app.use('/',productRoute)
+     const productRoute = require('./routes/productroute');
+     app.use('/', productRoute )
 
 app.listen(3000,function(){
     console.log("server is running")

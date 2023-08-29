@@ -1,5 +1,5 @@
 const Product = require("../models/productmodel");
-//const user = require("../models/usermodel");
+const Category = require("../models/categorymodel");
 //const bcrypt = require('bcrypt');
 const {ObjectId} = require("mongodb");
 
@@ -76,7 +76,8 @@ const editProductLoad = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-    
+        const id = req.params.id;
+        console.log(id)
       const updateData = {
         productname: req.body.productname,
         description: req.body.description,
@@ -84,10 +85,16 @@ const updateProduct = async (req, res) => {
         saleprice: req.body.saleprice,
         category: req.body.category,
         Quantity: req.body.Quantity,
-        image: req.file.filename
       };
   console.log(updateData)
-      const updatedProduct = await Product.findByIdAndUpdate({_id:req.body.id}, { $set: updateData }, { new: true });
+  if (req.file) {
+    updateData.image = req.file.filename;
+}
+  if (req.file) {
+    updateData.image = req.file.filename;
+}
+      const updatedProduct = await Product.findByIdAndUpdate({_id:new ObjectId(id.trim())}, { $set: updateData }, { new: true });
+      console.log(updatedProduct)
   
       if (!updatedProduct) {
         return res.status(404).json({ message: 'Product not found' });
@@ -99,12 +106,63 @@ const updateProduct = async (req, res) => {
       res.status(500).json({ message: 'An error occurred' });
     }
   };
-  
+  //delete products
+
+  const deleteProduct =  async(req,res)=>{
+    try{
+        const id=req.params.id;
+        console.log(id);
+        await Product.findByIdAndDelete({_id:new ObjectId(id.trim())});
+        res.redirect('/productlist')
+    }
+    catch(error){
+        console.log(error.message);
+    }
+  }
+  const loadCategory = async (req, res) => {
+    try {
+        const categories = await Category.find().lean(); // Fetch all categories from the database
+        res.render('categories', { categories }); // Pass the categories to the view
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+const addCategory = async(req,res)=>{
+    try {
+     const categoryname = req.body.categoryname;
+     const description = req.body.description;   
+     const image =req.file.filename;
+
+const category = new Category ({
+     categoryname:categoryname,
+     description:description,
+     image:image
+
+});
+console.log(category)
+const categoryData =await category.save();
+console.log(categoryData)
+if(categoryData){
+res.redirect('/categories');
+}
+else{
+res.render('categories',{message:'Something went wrong'});
+}
+      
+    } catch (error) {
+        console.log(error.message);
+    }
+}
 
 module.exports = {
     newProductLoad,
     addProduct,
     productLoad,
     editProductLoad,
-    updateProduct
+    updateProduct,
+    deleteProduct,
+    loadCategory,
+    addCategory
+
 }

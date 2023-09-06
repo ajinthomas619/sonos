@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Sonos Dashboard</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
-                <img src="/asset/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+                <img src="/asset/imgs/theme/logo.png" class="logo" alt="Evara Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -31,8 +31,8 @@
         <nav>
             <ul class="menu-aside">
                 <li class="menu-item">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
-                        <span class="text">Dashboard</span>
+                    <a class="menu-link" href="/admin/home"> <i class="icon material-icons md-home"></i>
+                        <span class="text" href="/home">Dashboard</span>
                     </a>
                 </li>
                 <li class="menu-item has-submenu">
@@ -40,10 +40,8 @@
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="page-categories.html">Categories</a>
+                        <a href="/productlist">Product List</a>
+                        <a href="/categories">Categories</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -64,7 +62,7 @@
                     </a>
                     <div class="submenu">
                         <a href="page-sellers-cards.html">Sellers cards</a>
-                        <a href="page-sellers-list.html">Sellers list</a>
+                        <a href="/admin/users">Users List list</a>
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
@@ -73,10 +71,8 @@
                         <span class="text">Add product</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-form-product-1.html" class="active">Add product 1</a>
-                        <a href="page-form-product-2.html">Add product 2</a>
-                        <a href="page-form-product-3.html">Add product 3</a>
-                        <a href="page-form-product-4.html">Add product 4</a>
+                        <a href="/addproduct" class="active">Add product 1</a>
+                    
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -94,9 +90,9 @@
                         <span class="text">Account</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-account-login.html">User login</a>
-                        <a href="page-account-register.html">User registration</a>
-                        <a href="page-error-404.html">Error 404</a>
+                        <a href="/login">User login</a>
+                        <a href="/register">User registration</a>
+                        <a href="/logout">User Logout</a>
                     </div>
                 </li>
                 <li class="menu-item">
@@ -227,17 +223,25 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-4">
+                                        <div class="mb-4">
+                                            <label class="form-label">Brand</label>
+                                            <input placeholder="" type="text"  name="brand" class="form-control">
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-4">
                                         <label class="form-label">Category</label>
                                         <select class="form-select" name="category">
-                                            <option> Wired </option>
-                                            <option> Wireless</option>
-                                            <option> Speakers </option>
+                                            <option value="">Select a category</option>
+                                            <% for(let i = 0; i < categories.length; i++) { %>
+                                                <option value=""><%= categories[i].categoryname %></option>
+                                            <% }; %>
                                         </select>
                                     </div>
+                                    
                                 </div>
                                 <div class="mb-4">
                                     <label class="form-label">Quantity</label>
-                                    <input type="number" name="Quantity" placeholder="" class="form-control" id="product_name">
+                                    <input type="number" name="quantity" placeholder="" class="form-control" id="product_name">
                                 </div>
                                 <div class="col-lg-3">
                     <div class="card mb-4">
@@ -255,7 +259,7 @@
                    
                                     <button class="btn btn-md rounded font-sm hover-up" type="submit"  >Add Product</button>
                                 </div>
-                                
+                                 
                             </form>
                         </div>
                     </div> <!-- card end// -->

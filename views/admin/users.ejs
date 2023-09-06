@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Evara Dashboard</title>
+    <title>Sonos Dashboard</title>
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,7 +22,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
-                <img src="/asset/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+                <img src="/asset/imgs/theme/logo.png" class="logo" alt="Evara Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -31,7 +31,7 @@
         <nav>
             <ul class="menu-aside">
                 <li class="menu-item">
-                    <a class="menu-link" href="index.html"> <i class="icon material-icons md-home"></i>
+                    <a class="menu-link" href="/admin/home"> <i class="icon material-icons md-home"></i>
                         <span class="text">Dashboard</span>
                     </a>
                 </li>
@@ -40,10 +40,9 @@
                         <span class="text">Products</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-products-list.html">Product List</a>
-                        <a href="page-products-grid.html">Product grid</a>
-                        <a href="page-products-grid-2.html">Product grid 2</a>
-                        <a href="page-categories.html">Categories</a>
+                        <a href="/productlist">Product List</a>
+                      
+                        <a href="/categories">Categories</a>
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -64,7 +63,7 @@
                     </a>
                     <div class="submenu">
                         <a href="page-sellers-cards.html">Sellers cards</a>
-                        <a href="page-sellers-list.html" class="active">Users list</a>
+                        <a href="/admin/users" class="active">Users list</a>
                         <a href="page-seller-detail.html">Seller profile</a>
                     </div>
                 </li>
@@ -73,10 +72,8 @@
                         <span class="text">Add product</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-form-product-1.html">Add product 1</a>
-                        <a href="page-form-product-2.html">Add product 2</a>
-                        <a href="page-form-product-3.html">Add product 3</a>
-                        <a href="page-form-product-4.html">Add product 4</a>
+                        <a href="/addproduct">Add product 1</a>
+                       
                     </div>
                 </li>
                 <li class="menu-item has-submenu">
@@ -94,9 +91,9 @@
                         <span class="text">Account</span>
                     </a>
                     <div class="submenu">
-                        <a href="page-account-login.html">User login</a>
-                        <a href="page-account-register.html">User registration</a>
-                        <a href="page-error-404.html">Error 404</a>
+                        <a href="/login">User login</a>
+                        <a href="/register">User registration</a>
+                        <a href="/logout">User Logout</a>
                     </div>
                 </li>
                 <li class="menu-item">
@@ -229,139 +226,43 @@
                                     <th>Email</th>
                                     <th>Status</th>
                                     <th>Registered</th>
-                                    <th class="text-end"> Action </th>
+                                    <th class="text-end">Action</th>
                                 </tr>
-                               
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td width="40%">
-                                        <a href="#" class="itemside">
-                                            <div class="left">
-                                                <img src="/asset/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
-                                            </div>
-                                            <div class="info pl-3">
-                                                <h6 class="mb-0 title"> <% 
-                                                    if(users.length>0){
-                                                      
-                                                            %>
-                                                            <tr>
-                                                                <td><%= users[0].username  %></td>
-                                                              
-                                                                <td><%= users[0].email  %></td>
-                    
-                                                            </tr>
-                    
-                    
-                                                            <%
-                                                        }
-                                                    
-                                                    else{
-                                                        %>
-                                                        <tr>
-                                                            <td colspan="5">Users not Found</td>
-                    
-                                                        </tr>
-                    
-                    
-                                                        <%
-                                                    }
-                                                    
-                                                    %></h6>
-                                                <small class="text-muted"></small>
-                                                <td><span class="badge rounded-pill alert-success">Active</span></td>
-                                                <td>08.07.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
-                                    </td>
-                                            </div>
-                                        </a>
-                                    </td>
-                                    <td></td>
-                                 
-                                    
-                                </tr>
-                               
+                                <% if (users.length > 0) {
+                                    users.forEach(function(user) { %>
+                                        <tr>
+                                            <td width="40%">
+                                                <a href="#" class="itemside">
+                                                    <div class="left">
+                                                        <img src="/asset/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
+                                                    </div>
+                                                    <div class="info pl-3">
+                                                        <h6 class="mb-0 title"><%= user.username %></h6>
+                                                        <small class="text-muted"></small>
+                                                        <td><%= user.email %></td>
+                                                        <td><span class="badge rounded-pill alert-success">Active</span></td>
+
+                                                        <td class="text-end">
+                                                            <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
+                                                        </td>
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    <% });
+                                } else { %>
+                                    <tr>
+                                        <td colspan="5">Users not Found</td>
+                                    </tr>
+                                <% } %>
                             </tbody>
-                            <tbody>
-                                <tr>
-                                    <td width="40%">
-                                        <a href="#" class="itemside">
-                                            <div class="left">
-                                                <img src="/asset/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
-                                            </div>
-                                            <div class="info pl-3">
-                                                <h6 class="mb-0 title"> <% 
-                                                    if(users.length>0){
-                                                      
-                                                            %>
-                                                            <tr>
-                                                                <td><%= users[1].username  %></td>
-                                                              
-                                                                <td><%= users[1].email  %></td>
-                    
-                                                            </tr>
-                    
-                    
-                                                            <%
-                                                        }
-                                                    
-                                                    else{
-                                                        %>
-                                                        <tr>
-                                                            <td colspan="5">Users not Found</td>
-                    
-                                                        </tr>
-                    
-                    
-                                                        <%
-                                                    }
-                                                    
-                                                    %></h6>
-                                                <small class="text-muted"></small>
-                                                <td><span class="badge rounded-pill alert-success">Active</span></td>
-                                    <td>08.07.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
-                                    </td>
-                                            </div>
-                                        </a>
-                                    </td>
-                                    <td></td>
-                                    
-                                </tr>
-                               
-                            </tbody>
-                        </table> <!-- table-responsive.// -->
-                    </div>
-                </div> <!-- card-body end// -->
-            </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
-        </section> <!-- content-main end// -->
-        <footer class="main-footer font-xs">
-            <div class="row pb-30 pt-15">
-                <div class="col-sm-6">
-                    <script>
-                    document.write(new Date().getFullYear())
-                    </script> ©, Evara - HTML Ecommerce Template .
-                </div>
-                <div class="col-sm-6">
-                    <div class="text-sm-end">
-                        All rights reserved
+                        </table>
                     </div>
                 </div>
-            </div>
+                
         </footer>
     </main>
     <script src="/asset/js/vendors/jquery-3.6.0.min.js"></script>

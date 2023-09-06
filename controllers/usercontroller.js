@@ -1,4 +1,6 @@
 const user=require('../models/usermodel');
+const Product = require("../models/productmodel");
+const Category = require("../models/categorymodel");
 const bcrypt = require('bcrypt');
 const nodemailer=require('nodemailer');
 const twilio = require('twilio');
@@ -181,7 +183,7 @@ const verifyLogin = async(req,res) =>{
     }
     else{
         req.session.user_id = userData._id;
-     res.redirect('/home');
+     res.redirect('/');
     }
 
   }
@@ -200,8 +202,13 @@ const verifyLogin = async(req,res) =>{
 }
 const loadHome=async(req,res)=>{
     try{
-
-  res.render('home')
+        const categories = await Category.find();
+        const products = await Product.find();
+        const userData = await user.findById(req.session.user_id);
+        console.log(userData)
+      //  console.log(categories);
+        res.render('home',{categories: categories , products: products,user:userData})
+ 
 
     }
     catch(error){
@@ -285,6 +292,7 @@ const resetPassword = async(req,res)=>{
        const User_id=req.body.user_id;
         const secure_password = await securePassword(password);
         const updatedData = await user.findByIdAndUpdate({_id:new mongoose.Types.ObjectId(User_id) },{$set:{password:secure_password , token:' '  }})
+        console.log(updatedData)
         res.redirect("/login")
     } catch (error) {
         console.log(error.message)
@@ -356,7 +364,8 @@ const verifyOtp = async(req,res)=>{
         const otpExpirationTime = otpData.otpExpiration;
         console.log(otpData)
         if(Number(userEnteredOTP) == storedOTP ){
-            res.status(200).send('OTP verified successfully');
+            //res.status(200).send('OTP verified successfully');
+            res.render('home')
         }
         else{
             res.status(400).send('Invalid OTP');
@@ -415,6 +424,16 @@ const verifyOtp1 = async(req,res)=>{
         console.log(error.message)
     }
 }
+const loadShopProduct = async(req,res)=>{
+     try{      const id = req.params.id;
+         console.log(id)
+     const products = await Product.findById(id)
+    res.render('shopproduct',{products:products})
+    }
+    catch(error){
+        console.log(error.message)
+    }
+}
 
 
 module.exports={
@@ -436,7 +455,8 @@ module.exports={
     sendOtp,
     verifyOtp,
     sendOtp1,
-    verifyOtp1
+    verifyOtp1,
+    loadShopProduct
    
     
 

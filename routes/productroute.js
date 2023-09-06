@@ -43,21 +43,45 @@ const storage=multer.diskStorage({
 })
 const upload=multer({storage:storage})
 
+const categoryStorage = multer.diskStorage({
+    destination :(req,file,cb) => {
+      cb(null,path.join(__dirname, '../public/categoryimages'))
+    },
+    filename : (req, file, cb) => {
+      cb(null, Date.now() +'-'+ file.originalname)
+    }
+  })
+  const categoryUpload = multer({storage : categoryStorage})
+  
+  const productStorage = multer.diskStorage({
+    destination :(req,file,cb) => {
+      cb(null,path.join(__dirname, '../public/productimages'))
+    },
+    filename : (req, file, cb) => {
+      cb(null, Date.now() +'-'+ file.originalname)
+    }
+  })
+  const productUpload = multer({storage :productStorage})
+
  const auth=require('../middleware/adminauth');
 
 
 
 
 product_route.get('/addproduct',auth.isLogin,productController.newProductLoad);
-product_route.post('/addproduct',upload.single('image'), productController.addProduct);
+product_route.post('/addproduct',productUpload.array('image'), productController.addProduct);
 
 
 product_route.get('/productlist',auth.isLogin,productController.productLoad);
 product_route.get('/editproduct/:id',productController.editProductLoad);
-product_route.post('/editproduct/:id',upload.single('image'),productController.updateProduct);
+product_route.post('/editproduct/:id',productUpload.array('image'),productController.updateProduct);
 product_route.get('/productlist/:id',productController.deleteProduct);
  product_route.get('/categories',productController.loadCategory);
-product_route.post('/categories',upload.single('image'), productController.addCategory);
+product_route.post('/categories',categoryUpload.single('image'), productController.addCategory);
+product_route.get('/editcategories/:id',productController.editCategoryLoad);
+product_route.post('/editcategories/:id',categoryUpload.single('image'),productController.updateCategory);
+product_route.get('/categories/:id',productController.deleteCategory);
+
 
 
 

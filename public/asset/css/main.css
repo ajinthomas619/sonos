@@ -96,16 +96,18 @@ input:focus::-moz-placeholder {
 
 /*--- Common Classes---------------------*/
 ::-webkit-input-placeholder {
-  color: #838383;
+  color: #38403E;
 }
 :-ms-input-placeholder {
-  color: #838383;
+  color: #38403E;
 }
 ::-ms-input-placeholder {
-  color: #838383;
+  color: #38403E;
+  
 }
 ::placeholder {
-  color: #838383;
+  color: #38403E;
+ 
 }
 
 .fix {
@@ -200,7 +202,7 @@ input[type=number]:focus,
 }
 
 hr {
-  color: #a6acb3 !important;
+  color: #38403E !important;
 }
 
 table {
@@ -209,7 +211,7 @@ table {
 }
 
 table thead {
-  background: #f7f8f9;
+  background: #38403E;
 }
 
 table thead th {
@@ -230,7 +232,7 @@ table .form-check {
 }
 
 .table-light {
-  color: #495058 !important;
+  color: #38403E !important;
 }
 
 .shadow {
@@ -240,7 +242,7 @@ table .form-check {
 }
 
 .text-brand {
-  color: #088178 !important;
+  color: #FBD300 !important;
 }
 
 .bg-primary {
@@ -248,7 +250,7 @@ table .form-check {
 }
 
 .text-primary {
-  color: #088178 !important;
+  color: #FBD300 !important;
 }
 
 .bg-primary-light {
@@ -454,7 +456,7 @@ h4,
 h5,
 h6 {
   font-family: "Spartan", sans-serif;
-  color: #495057;
+  color: #38403E;
   font-weight: 600;
   line-height: 1.5;
 }
@@ -505,7 +507,7 @@ b {
 }
 
 .card-title {
-  color: #383e50 !important;
+  color: #38403E !important;
 }
 
 .text-body {
@@ -528,13 +530,13 @@ b {
 }
 
 .menu-aside .menu-item .icon {
-  color: #adb5bd;
+  color: #FBD300;
   margin-right: 10px;
   font-size: 24px;
 }
 
 .menu-aside .menu-item.active .icon {
-  color: #088178;
+  color:#C8046C;
 }
 
 .menu-aside .menu-item.active .menu-link {
@@ -542,14 +544,13 @@ b {
 }
 
 .menu-aside .menu-item.active .submenu a.active {
-  color: #088178 !important;
+  color: #C8046C !important;
 }
-
 .menu-aside .menu-link {
   padding: 10px;
   font-weight: 500;
   font-size: 13px;
-  color: #292f46;
+  color: #FBD300;
   border-radius: 0.3rem;
   position: relative;
 }
@@ -567,7 +568,7 @@ b {
 }
 
 .menu-aside .submenu a {
-  color: #6c757d;
+  color: #FBD300;
   padding: 5px 0 5px 15px;
   -webkit-transition-duration: 0.3s;
           transition-duration: 0.3s;
@@ -576,7 +577,7 @@ b {
 }
 
 .menu-aside .submenu a:hover {
-  color: #000;
+  color: #fff;
   -webkit-transition-duration: 0.3s;
           transition-duration: 0.3s;
 }
@@ -586,7 +587,7 @@ b {
   width: 5px;
   height: 5px;
   position: absolute;
-  background-color: #adb5bd;
+  background-color: #38403E;
   left: 0;
   top: 50%;
   -webkit-transform: translateY(-50%);
@@ -606,7 +607,7 @@ b {
   margin-top: .6em;
   vertical-align: middle;
   content: "";
-  border-top: 5px solid #adb5bd;
+  border-top: 5px solid #38403E;
   border-right: 5px solid transparent;
   border-bottom: 0;
   border-left: 5px solid transparent;
@@ -3949,7 +3950,7 @@ body.offcanvas-active {
   padding: 30px 3%;
   margin-left: auto;
   margin-right: auto;
-  background-color: #f8f9fa;
+  background-color: #FBD300;
 }
 
 .navbar-aside {
@@ -3960,7 +3961,7 @@ body.offcanvas-active {
   bottom: 0;
   width: 100%;
   overflow-y: auto;
-  background-color: #fff;
+  background-color: #38403E;
   -webkit-box-shadow: none;
           box-shadow: none;
   z-index: 10;

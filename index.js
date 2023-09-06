@@ -8,6 +8,7 @@ const path = require('path')
 
 const express = require("express");
 const app = express();
+app.use('/public',express.static(path.resolve(__dirname,'public')))
 app.use('/assets',express.static(path.resolve(__dirname,'public/assets')))
 app.use('/asset',express.static(path.resolve(__dirname,'public/asset')))
 app.set('view engine','ejs');
@@ -19,7 +20,8 @@ app.use(logger('dev'));
 const nocache = require('nocache');
 app.use(nocache());
 
-
+const cors = require('cors');
+app.use(cors());
 
 
 
@@ -48,6 +50,8 @@ app.get('/login',function(req,res){
      const productRoute = require('./routes/productroute');
      app.use('/', productRoute )
 
-app.listen(3000,function(){
-    console.log("server is running")
+     const port = process.env.PORT||3000;
+
+app.listen(port,function(){
+    console.log(`server is running on port ${port}`)
 })

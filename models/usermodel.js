@@ -27,7 +27,10 @@ is_admin:{
 },
 is_blocked:{
 type:Boolean
-}
+},
+cart:{
+    type:Array,
+},
 
 
 });

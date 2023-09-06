@@ -24,7 +24,7 @@ admin_route.use(express.json());
 admin_route.use(express.urlencoded({ extended: true }));
 
 
-admin_route.get('/',adminauth.isLogout,adminController.loadLogin)
+admin_route.get('/',adminController.loadLogin)
 
 
 admin_route.post('/',adminController.verifyLogin);
@@ -36,7 +36,7 @@ admin_route.get('/users',adminController.adminDashboard);
 
 
  admin_route.get('*',function(req,res){
-     res.redirect('/home')
+     res.redirect('/admin')
  })
 
 

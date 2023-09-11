@@ -267,7 +267,7 @@
                         <div class="header-action-right">
                             <div class="header-action-2">
                                 <div class="header-action-icon-2">
-                                    <a href="shop-wishlist.html">
+                                    <a href="/wishlist">
                                         <img class="svgInject" alt="Evara" src="/assets/imgs/theme/icons/icon-heart.svg">
                                         <span class="pro-count blue">4</span>
                                     </a>
@@ -1007,7 +1007,7 @@
                                         </div>
                                         <div class="product-action-1">
                                             <a aria-label="Quick view" class="action-btn hover-up" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i class="fi-rs-eye"></i></a>
-                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="shop-wishlist.html"><i class="fi-rs-heart"></i></a>
+                                            <a aria-label="Add To Wishlist" class="action-btn hover-up" href="/addtoWishlist"><i class="fi-rs-heart"></i></a>
                                             <a aria-label="Compare" class="action-btn hover-up" href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
                                         </div>
                                         <div class="product-badges product-badges-position product-badges-mrg">
@@ -1031,6 +1031,9 @@
                                         </div>
                                         <div class="product-action-1 show">
                                             <a onclick="addToCart('<%=products[i]._id%>' , '<%=products[i].saleprice%>')" aria-label="Add To Cart" class="action-btn hover-up"><i class="fi-rs-shopping-bag-add"></i></a>
+                                        </div>
+                                        <div class="product-action-2 show">
+                                            <a onclick="addToWishlist('<%=products[i]._id%>' )" aria-label="Add To Wishlist" class="action-btn hover-up"><i class="fi-rs-heart"></i></a>
                                         </div>
                                     </div>
                                   
@@ -3346,6 +3349,25 @@
                             icon: 'success',
                             title: 'Added to cart',
                             text: 'Product added to cart succesfully',
+                        })
+                    }
+                }
+            })
+        }
+        function addToWishlist(proId){
+            $.ajax({
+                url:'/addtoWishlist',
+                method:'post',
+                data:{
+                    id:proId,
+                   
+                },
+                success:(response)=>{
+                    if(response == true){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to wishlist',
+                            text: 'Product added to wishlist succesfully',
                         })
                     }
                 }

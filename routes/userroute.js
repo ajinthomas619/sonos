@@ -4,7 +4,11 @@ const session=require('express-session');
 
 const config = require("../config/config")
 
-user_route.use(session({secret:config.sessionSecret}));
+user_route.use(session({
+    secret: config.sessionSecret,
+    resave: false, 
+    saveUninitialized: false, 
+  }));
 
 
 
@@ -79,10 +83,12 @@ user_route.post('/forget-password1',userController.resetPassword);
 user_route.post('/add-to-cart',cartController.addToCart);
 user_route.get('/cart',cartController.viewCart);
 
-user_route.put('/updateCartItem/:productId',cartController.updateCartItem);
-user_route.delete('/removeFromCart/:productId',cartController.removeFromCart);
+user_route.all('/updateCartItem',cartController.updateCartItem);
+user_route.get('/removeFromCart/:id',cartController.removeFromCart);
 user_route.get('/shopproduct/:id',userController.loadShopProduct);
-
+user_route.post('/addtoWishlist',cartController.addToWishlist);
+user_route.get('/wishlist',cartController.loadWishlist);
+user_route.get('/removeFromWishlist/:id',cartController.removeFromWishlist);
 
 
 

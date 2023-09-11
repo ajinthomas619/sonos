@@ -31,6 +31,9 @@ type:Boolean
 cart:{
     type:Array,
 },
+wishlist:{
+    type:Array
+}
 
 
 });

@@ -2,7 +2,7 @@ const Product = require("../models/productmodel");
 const userdata = require('../models/usermodel');
 const mongoose = require('mongoose');
 const { ObjectId } = require("mongodb");
-
+const mongodb = require('mongodb')
 
 
 const addToCart = async (req, res) => {
@@ -12,9 +12,10 @@ const addToCart = async (req, res) => {
         const price = parseInt(req.body.price)
         const quantity=1;
         let userData = await userdata.findByIdAndUpdate(userId ,
-            {
-                $push:{'cart':{proId,price,quantity}}
-            })
+                    { $push: { cart: {proId,
+                    quantity:quantity,
+                    } } }
+        )
         res.json(true)
         // const productId = req.body.id;
         // console.log('productid:-'+productId)
@@ -62,64 +63,153 @@ const addToCart = async (req, res) => {
 };
 
 const viewCart = async (req, res) => {
-    try {
-        const items=[]
-        
-            const userCart = await userdata.findOne({_id: req.session.user_id})
-            res.render('Cart',{userCart: userCart,products:items})
-    }
-         catch (error) {
-            console.log(error.message);
+    try{
+        let userSession = req.session.user_id;
+        const oid = new mongodb.ObjectId(userSession);
+        let data = await userdata.aggregate([
+            {$match:{_id:oid}},
+            {$unwind:'$cart'},
+            {$project:{
+                proId:{'$toObjectId':'$cart.proId'},
+                quantity:'$cart.quantity',
+                // size:'$cart.size'
+            }},
+            {$lookup:{
+                from:'products',
+                localField:'proId', 
+                foreignField:'_id',
+                as:'ProductDetails',
+            }},
+
+
+        ])
+        let GrandTotal = 0
+        for(let i=0;i<data.length;i++){
+            let qua = parseInt(data[i].quantity);
+            GrandTotal = GrandTotal+(qua*parseInt(data[i].ProductDetails[0].sale_price))
         }
-      }
+        res.render('cart' , {products:data , GrandTotal})
+    }catch(err){
+        console.log(err)
+        res.send("Error")
+        }
+    }
 
 const updateCartItem = async (req, res) => {
     try {
-        const { productId } = req.params;
-        const { quantity } = req.body;
+        const userId = req.session.user_id;
+        const proIdToUpdate = req.body.id;
+        const newQuantity = parseInt(req.body.quantity);
 
-        const userId = req.user._id;
-        const cart = await Cart.findOne({ user: userId });
+        // Find the user by ID
+        const user = await userdata.findById(userId);
 
-        if (!cart) {
-            return res.status(404).json({ message: 'Cart not found' });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
 
-        const cartItem = cart.items.find((item) => item.product.equals(productId));
+        // Find the cart item with the matching product ID
+        const cartItem = user.cart.find((item) => item.proId === proIdToUpdate);
+
         if (!cartItem) {
-            return res.status(404).json({ message: 'Item not found in cart ' })
+            return res.status(404).json({ message: 'Product not found in cart' });
         }
-        cartItem.quantity = parseInt(quantity, 10);
-        cart.total = cart.items.reduce((total, item) => total + item.price * item.quantity, 0);
-        await cart.save();
-        res.status(200).json({ message: 'Cart item updated successfully' })
 
+        // Update the quantity of the cart item
+        cartItem.quantity = newQuantity;
+
+        // Save the updated user document
+        await user.save();
+
+        res.status(200).json({ message: 'Cart updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-    catch (error) {
-        res.status(500).json({ error: 'not updated' })
-    }
+
 }
 const removeFromCart = async (req, res) => {
+     try {
+        const userSession = req.session.user_id;
+        userdata.updateOne(
+            {_id: userSession},
+            {$pull: {cart: {proId: req.params.id}}
+        }).then((status)=>{
+            res.redirect('/cart')
+        }).catch((err)=>{
+            console.log(err.message);
+        })
+     } catch (error) {
+      console.log(error.message)  
+     }
+} 
+const addToWishlist = async (req, res) => {
     try {
-        const { productId } = req.params;
-        const userId = req.user._id;
-        const cart = await Cart.findOne({ user: userId });
-        if (!cart) {
-            return res.status(404).json({ message: 'Cart not found' })
-        }
-        const updatedItems = cart.items.filter((item) => !item.product.equals(productId));
-        cart.total = updatedItems.reduce((total, item) => total + item.price * item.quantity, 0);
-        cart.items = updatedItems;
-        await cart.save();
-        res.status(200).json({ message: 'Product removed from cart successfully', cart })
+        const userId = req.session.user_id
+        const proId = req.body.id
+        const price = parseInt(req.body.price)
+        const quantity=1;
+        let userData = await userdata.findByIdAndUpdate(userId ,
+                    { $push: { wishlist: {proId
+                    } } }
+        )
+        res.json(true)
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
     }
-    catch (error) {
-        console.log(error)
+};
+const loadWishlist = async (req, res) => {
+    try{
+        let userSession = req.session.user_id;
+        const oid = new mongodb.ObjectId(userSession);
+        let data = await userdata.aggregate([
+            {$match:{_id:oid}},
+            {$unwind:'$wishlist'},
+            {$project:{
+                proId:{'$toObjectId':'$wishlist.proId'},
+            
+                // size:'$cart.size'
+            }},
+            {$lookup:{
+                from:'products',
+                localField:'proId', 
+                foreignField:'_id',
+                as:'ProductDetails',
+            }},
+
+
+        ])
+  
+        res.render('wishlist' , {products:data })
+    }catch(err){
+        console.log(err)
+        res.send("Error")
+        }
+    }
+const removeFromWishlist = async (req, res) => {
+    try {
+       const userSession = req.session.user_id;
+       userdata.updateOne(
+           {_id: userSession},
+           {$pull: {wishlist: {proId: req.params.id}}
+       }).then((status)=>{
+           res.redirect('/wishlist')
+       }).catch((err)=>{
+           console.log(err.message);
+        })
+    } catch (error) {
+     console.log(error.message)  
     }
-}
+} 
+
 module.exports = {
     addToCart,
     viewCart,
     updateCartItem,
-    removeFromCart
+    removeFromCart,
+    addToWishlist,
+    loadWishlist,
+    removeFromWishlist
 }

@@ -29,7 +29,7 @@ saleprice:{
     required:true
 },
 image:[{
-type:String
+type:Array
 }],
 
 brand:{

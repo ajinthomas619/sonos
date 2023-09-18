@@ -15,7 +15,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/main.css?v=3.4">
-    
 </head>
 
 <body>
@@ -146,7 +145,7 @@
             <div class="container">
                 <div class="header-wrap header-space-between position-relative">
                     <div class="logo logo-width-1 d-block d-lg-none">
-                        <a href="/"><img src="assets/imgs/theme/logo.png" alt="logo"></a>
+                        <a href="index.html"><img src="assets/imgs/theme/logo.svg" alt="logo"></a>
                     </div>
                     <div class="header-nav d-none d-lg-flex">
                         <div class="main-categori-wrap d-none d-lg-block">
@@ -333,9 +332,9 @@
                         <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block">
                             <nav>
                                 <ul>
-                                    <li><a class="active" href="/">Home <i class="fi-rs-angle-down"></i></a>
+                                    <li><a class="active" href="index.html">Home <i class="fi-rs-angle-down"></i></a>
                                         <ul class="sub-menu">
-                                            <li><a href="/">Home 1</a></li>
+                                            <li><a href="index.html">Home 1</a></li>
                                             <li><a href="index-2.html">Home 2</a></li>
                                             <li><a href="index-3.html">Home 3</a></li>
                                             <li><a href="index-4.html">Home 4</a></li>
@@ -528,7 +527,7 @@
         <div class="mobile-header-wrapper-inner">
             <div class="mobile-header-top">
                 <div class="mobile-header-logo">
-                    <a href="/"><img src="assets/imgs/theme/logo.png" alt="logo"></a>
+                    <a href="index.html"><img src="assets/imgs/theme/logo.svg" alt="logo"></a>
                 </div>
                 <div class="mobile-menu-close close-style-wrap close-style-position-inherit">
                     <button class="close-style search-close">
@@ -566,9 +565,9 @@
                     <!-- mobile menu start -->
                     <nav>
                         <ul class="mobile-menu">
-                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="/">Home</a>
+                            <li class="menu-item-has-children"><span class="menu-expand"></span><a href="index.html">Home</a>
                                 <ul class="dropdown">
-                                    <li><a href="/">Home 1</a></li>
+                                    <li><a href="index.html">Home 1</a></li>
                                     <li><a href="index-2.html">Home 2</a></li>
                                     <li><a href="index-3.html">Home 3</a></li>
                                     <li><a href="index-4.html">Home 4</a></li>
@@ -688,55 +687,202 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="/" rel="nofollow">Home</a>
+                    <a href="index.html" rel="nofollow">Home</a>
                     <span></span> Shop
-                    <span></span> Wishlist
+                    <span></span> Checkout
                 </div>
             </div>
         </div>
         <section class="mt-50 mb-50">
             <div class="container">
                 <div class="row">
-                    <div class="col-12">
-                        <div class="table-responsive">
-                            <table class="table shopping-summery text-center">
-                                <thead>
-                                    <tr class="main-heading">
-                                        <th scope="col" colspan="2">Product</th>
-                                        <th scope="col">Name</th>
-                                        <th scope="col">Price</th>
-                                        <th scope="col">Action</th>
-                                      
-                                    </tr>
-                                </thead>
-                                <tbody id="cart-items">
-                                    <!-- Use EJS to loop through cart items -->
-                                    <% products.forEach(function(product,index) { %>
+                    <div class="col-lg-6 mb-sm-15">
+                        <div class="toggle_info">
+                            <span><i class="fi-rs-user mr-10"></i><span class="text-muted">Already have an account?</span> <a href="#loginform" data-bs-toggle="collapse" class="collapsed" aria-expanded="false">Click here to login</a></span>
+                        </div>
+                        <div class="panel-collapse collapse login_form" id="loginform">
+                            <div class="panel-body">
+                                <p class="mb-30 font-sm">If you have shopped with us before, please enter your details below. If you are a new customer, please proceed to the Billing &amp; Shipping section.</p>
+                                <form class= "payment-form" action="/checkout" method="post">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-25">
+                                                <h4>Shipping Address</h4>
+                                            </div>
+                                            <div class="row mt-20">
+                                                <% for (let i = 0; i < user.address.length; i++) { %>
+                                                <div class="col-lg-6">
+                                                    <div class="card mb-3 mb-lg-0">
+                                                        <div class="card-header">
+                                                            <input class="form-check-input" value="<%= JSON.stringify(user.address[i]) %>" type="radio" name="address" id="address">
+                                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                                    <h5 class="mb-0">Address <%= i+1 %></h5>
+                                                                </label>
+                                                        </div>
+                                                        <div class="card-body">
+                                                            <address><%=user.address[i].name%><br> <%=user.address[i].billing_address%>, <%=user.address[i].billing_address2%>, <%=user.address[i].city%><br><%=user.address[i].state%><br><%=user.address[i].zipcode%><br><%=user.address[i].phone%><br><%=user.address[i].email%></address>
+                                                            <p><%=user.address[i].order_notes%></p>
+                                                            <a href="#" class="btn-small">Edit</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                              
+                                                <% } %>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="order_review">
+                                                <div class="mb-20">
+                                                    <h4>Your Orders</h4>
+                                                </div>
+                                                <div class="table-responsive order_table text-center">
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="2">Product</th>
+                                                                <th>Total</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <%var sum=0%>
+                                                            <% for(i=0;i<user.cart.length;i++){ %>
+                                                            <tr>
+                                                                <td class="image product-thumbnail"><img src="/assetsbackend/imgs/products/<%=userCart.cart[i].productId.image[0]%>" alt="#"></td>
+                                                                <td>
+                                                                    <h5><a href="shop-product-full.html"><%=userCart.cart[i].productId.productName%></a></h5> <span class="product-qty">x <%=userCart.cart[i].quantity%></span>
+                                                                </td>
+                                                                <td>₹<span><%=userCart.cart[i].productId.salePrice * userCart.cart[i].quantity%></span></td>
+                                                                <%sum += userCart.cart[i].productId.salePrice * userCart.cart[i].quantity%>
+                                                                <input type="hidden" name="productId" value="<%=userCart.cart[i].productId._id%>">
+                                                                <input type="hidden" name="salePrice" value="<%=userCart.cart[i].productId.salePrice%>">
+                                                                <input type="hidden" name="quantity" value="<%=userCart.cart[i].quantity%>">
+                                                            </tr>
+                                                            <% } %>
+                                                            <tr>
+                                                                <th>SubTotal</th>
+                                                                <td class="product-subtotal" colspan="2">₹<%=sum%></td>
+                                                                <input type="hidden" name="total" value="<%=sum%> ">
+                    
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Shipping</th>
+                                                                <td colspan="2"><em>Free Shipping</em></td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Total</th>
+                                                                <td colspan="2" class="product-subtotal">₹<span class="font-xl text-brand fw-900"><%=sum%></span></td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                                <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                                                <div class="payment_method">
+                                                    <div class="mb-25">
+                                                        <h5>Payment</h5>
+                                                    </div>
+                                                    <div class="payment_option">
+                                                        <div class="custome-radio">
+                                                            <input class="form-check-input" required="" type="radio" name="payment_option" value="razorpay" id="exampleRadios3" checked="">
+                                                            <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Online Payment</label>
+                                                            <div class="form-group collapse in" id="bankTranfer">
+                                                                <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="custome-radio">
+                                                            <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" value="COD" checked="">
+                                                            <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#cashOnDelivery" aria-controls="checkPayment"  >Cash On Delivery</label>
+                                                            <div class="form-group collapse in" id="checkPayment">
+                                                                <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
+                                                            </div>
+                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button id="place-order-button" type="submit" class="btn btn-fill-out btn-block mt-30">Place Order</button>                        </div>
+                                        </div>
+                                    </div>
+                                </form>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="order_review">
+                            <div class="mb-20">
+                                <h4>Your Orders</h4>
+                            </div>
+                            <div class="table-responsive order_table text-center">
+                                <table class="table">
+                                    <thead>
                                         <tr>
-                                            <td><%=index+1%></td>
-                                            <td>
-                                                <!-- Display product image here -->
-                                                <img src="productimages/<%= product.ProductDetails[0].image %>" alt="<%= product.image %>">
-                                            </td>
-                                            <td>
-                                                <!-- Display product name here -->
-                                                <%= product.ProductDetails[0].productname %>
-                                            </td>
-                                            <td>
-                                                <!-- Display product price here -->
-                                                <%= product.ProductDetails[0].saleprice %> 
-                                            </td>
-                                            <
-                                        
-                                           
-                                            <td>
-                                                <!-- Add a button/link to remove the item -->
-                                                <a href="/removeFromWishlist/<%= product.ProductDetails[0]._id %>" class="btn btn-danger">Remove</a>
-                                            </td>
+                                            <th colspan="2">Product</th>
+                                            <th>Total</th>
                                         </tr>
-                                    <% }); %>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td class="image product-thumbnail"><img src="assets/imgs/shop/product-1-1.jpg" alt="#"></td>
+                                            <td>
+                                                <h5><a href="shop-product-full.html">Yidarton Women Summer Blue</a></h5> <span class="product-qty">x 2</span>
+                                            </td>
+                                            <td>$180.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="image product-thumbnail"><img src="assets/imgs/shop/product-2-1.jpg" alt="#"></td>
+                                            <td>
+                                                <h5><a href="shop-product-full.html">LDB MOON Women Summe</a></h5> <span class="product-qty">x 1</span>
+                                            </td>
+                                            <td>$65.00</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="image product-thumbnail"><img src="assets/imgs/shop/product-3-1.jpg" alt="#"></td>
+                                            <td><i class="ti-check-box font-small text-muted mr-10"></i>
+                                                <h5><a href="shop-product-full.html">Women's Short Sleeve Loose</a></h5> <span class="product-qty">x 1</span>
+                                            </td>
+                                            <td>$35.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>SubTotal</th>
+                                            <td class="product-subtotal" colspan="2">$280.00</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Shipping</th>
+                                            <td colspan="2"><em>Free Shipping</em></td>
+                                        </tr>
+                                        <tr>
+                                            <th>Total</th>
+                                            <td colspan="2" class="product-subtotal"><span class="font-xl text-brand fw-900">$280.00</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="bt-1 border-color-1 mt-30 mb-30"></div>
+                            <div class="payment_method">
+                                <div class="mb-25">
+                                    <h5>Payment</h5>
+                                </div>
+                                <div class="payment_option">
+                                    <div class="custome-radio">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios3" checked="">
+                                        <label class="form-check-label" for="exampleRadios3" data-bs-toggle="collapse" data-target="#bankTranfer" aria-controls="bankTranfer">Direct Bank Transfer</label>
+                                        <div class="form-group collapse in" id="bankTranfer">
+                                            <p class="text-muted mt-5">There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration. </p>
+                                        </div>
+                                    </div>
+                                    <div class="custome-radio">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios4" checked="">
+                                        <label class="form-check-label" for="exampleRadios4" data-bs-toggle="collapse" data-target="#checkPayment" aria-controls="checkPayment">Check Payment</label>
+                                        <div class="form-group collapse in" id="checkPayment">
+                                            <p class="text-muted mt-5">Please send your cheque to Store Name, Store Street, Store Town, Store State / County, Store Postcode. </p>
+                                        </div>
+                                    </div>
+                                    <div class="custome-radio">
+                                        <input class="form-check-input" required="" type="radio" name="payment_option" id="exampleRadios5" checked="">
+                                        <label class="form-check-label" for="exampleRadios5" data-bs-toggle="collapse" data-target="#paypal" aria-controls="paypal">Paypal</label>
+                                        <div class="form-group collapse in" id="paypal">
+                                            <p class="text-muted mt-5">Pay via PayPal; you can pay with your credit card if you don't have a PayPal account.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <a href="#" class="btn btn-fill-out btn-block mt-30">Place Order</a>
                         </div>
                     </div>
                 </div>
@@ -775,7 +921,7 @@
                     <div class="col-lg-4 col-md-6">
                         <div class="widget-about font-md mb-md-5 mb-lg-0">
                             <div class="logo logo-width-1 wow fadeIn animated">
-                                <a href="/"><img src="assets/imgs/theme/logo.png" alt="logo"></a>
+                                <a href="index.html"><img src="assets/imgs/theme/logo.svg" alt="logo"></a>
                             </div>
                             <h5 class="mt-20 mb-10 fw-600 text-grey-4 wow fadeIn animated">Contact</h5>
                             <p class="wow fadeIn animated">

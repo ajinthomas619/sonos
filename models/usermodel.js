@@ -1,5 +1,38 @@
 const mongoose=require("mongoose");
 var id=new mongoose.Types.ObjectId();
+
+
+const addressData = new mongoose.Schema({
+    name: {
+      type: String
+    },
+    addressLine1: {
+      type: String
+    },
+    addressLine2: {
+      type: String
+    },
+    city: {
+      type: String
+    },
+    state: {
+      type: String
+    },
+    pinCode: {
+      type: String
+    },
+    phone: {
+      type: String
+    },
+    email: {
+      type: String
+    },
+    addressType: {
+      type: String
+    }
+  });
+  
+
 const userData=mongoose.Schema({
     username:{
         type:String,
@@ -28,12 +61,17 @@ is_admin:{
 is_blocked:{
 type:Boolean
 },
+is_active:{
+    type:Boolean,
+    required:true
+},
 cart:{
     type:Array,
 },
 wishlist:{
     type:Array
-}
+},
+address:[addressData]
 
 
 });

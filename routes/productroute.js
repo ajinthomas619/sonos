@@ -14,9 +14,14 @@ product_route.set('view engine','ejs')
 product_route.set('views','./views/admin')
 
 
+product_route.set('view engine','ejs')
+product_route.set('views','./views/user')
+
+
+
 
 const productController = require("../controllers/productcontroller");
-
+const orderController = require("../controllers/ordercontroller");
 
 const bodyParser=require("body-parser")
 product_route.use(bodyParser.json())
@@ -45,7 +50,7 @@ const upload=multer({storage:storage})
 
 const categoryStorage = multer.diskStorage({
     destination :(req,file,cb) => {
-      cb(null,path.join(__dirname, '../public/categoryimages'))
+      cb(null,path.join(__dirname, '../public/productimages'))
     },
     filename : (req, file, cb) => {
       cb(null, Date.now() +'-'+ file.originalname)
@@ -81,7 +86,9 @@ product_route.post('/categories',categoryUpload.single('image'), productControll
 product_route.get('/editcategories/:id',productController.editCategoryLoad);
 product_route.post('/editcategories/:id',categoryUpload.single('image'),productController.updateCategory);
 product_route.get('/categories/:id',productController.deleteCategory);
-
+product_route.get('/orderdetails',orderController.loadOrderDetails);
+product_route.get('/checkout',orderController.loadPlaceOrder);
+product_route.get('/shopcategories/:id',productController.lookupProduct);
 
 
 

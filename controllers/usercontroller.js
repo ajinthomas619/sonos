@@ -428,7 +428,8 @@ const loadShopProduct = async(req,res)=>{
      try{      const id = req.params.id;
          console.log(id)
      const products = await Product.findById(id)
-    res.render('shopproduct',{products:products})
+     const userData = await user.findById(req.session.user_id);
+    res.render('shopproduct',{products:products,user:userData})
     }
     catch(error){
         console.log(error.message)

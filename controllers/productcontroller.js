@@ -222,7 +222,21 @@ const deleteCategory = async (req, res) => {
         console.log(error.message);
     }
 }
-
+const lookupProduct= async (req,res)=>{
+    try{
+        const id = req.params.id
+       console.log("id"+id)
+      const categoryName= await Category.findById(id);
+      const name = categoryName.categoryname
+      console.log(name);
+      const product =await Product.find({category:name})
+       console.log('pname='+ product);
+       res.render('shopcategories',{product:product, products: product})
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
 
 module.exports = {
     newProductLoad,
@@ -235,6 +249,7 @@ module.exports = {
     addCategory,
     editCategoryLoad,
     updateCategory,
-    deleteCategory
+    deleteCategory,
+    lookupProduct
 
 }

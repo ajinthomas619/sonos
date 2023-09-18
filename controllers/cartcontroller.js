@@ -88,6 +88,7 @@ const viewCart = async (req, res) => {
             let qua = parseInt(data[i].quantity);
             GrandTotal = GrandTotal+(qua*parseInt(data[i].ProductDetails[0].sale_price))
         }
+        console.log()
         res.render('cart' , {products:data , GrandTotal})
     }catch(err){
         console.log(err)
@@ -95,39 +96,76 @@ const viewCart = async (req, res) => {
         }
     }
 
-const updateCartItem = async (req, res) => {
-    try {
-        const userId = req.session.user_id;
-        const proIdToUpdate = req.body.id;
-        const newQuantity = parseInt(req.body.quantity);
+// const updateCartItem = async (req, res) => {
+//     try {
+//         const userId = req.session.user_id;
+//         const proIdToUpdate = req.body.id;
+//         const newQuantity = parseInt(req.body.quantity);
 
-        // Find the user by ID
-        const user = await userdata.findById(userId);
+//         // Find the user by ID
+//         const user = await userdata.findById(userId);
 
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+//         if (!user) {
+//             return res.status(404).json({ message: 'User not found' });
+//         }
+
+//         // Find the cart item with the matching product ID
+//         const cartItem = user.cart.find((item) => item.proId === proIdToUpdate);
+
+//         if (!cartItem) {
+//             return res.status(404).json({ message: 'Product not found in cart' });
+//         }
+
+//         // Update the quantity of the cart item
+//         cartItem.quantity = newQuantity;
+
+//         // Save the updated user document
+//         await user.save();
+
+//         res.status(200).json({ message: 'Cart updated successfully' });
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+
+// }
+const changeQuantity = async(req,res)=>{
+    const userId = req.session.user_id;
+    req.body.count = parseInt(req.body.count);
+    req.body.quantity = parseInt(req.body.quantity);
+    if(req.body.count == -1 && req.body.quantity == 1){
+        console.log(req.body.proId)
+        userdata.updateOne(
+            {_id: userId},
+            {$pull: {cart: {proId: req.body.proId}}
         }
+        ).then((status)=>{
+            console.log(status)
+            res.json({status:true})
+        })
+    }else{
+        const oid = new mongodb.ObjectId(userId)
+        userdata.updateOne(
+            {
+              _id:oid,
+               'cart.proId': req.body.proId,
+            },
+            {
+              $inc: {
+                'cart.$.quantity': req.body.count,
+              }
+            },
+            {
+                new:true
+            }
+        ).then((status)=>{
+            console.log("COunt incc====>",status);
+            res.json({status:false})
+        })
+        }
+    }
 
-        // Find the cart item with the matching product ID
-        const cartItem = user.cart.find((item) => item.proId === proIdToUpdate);
 
-        if (!cartItem) {
-            return res.status(404).json({ message: 'Product not found in cart' });
-        }
-
-        // Update the quantity of the cart item
-        cartItem.quantity = newQuantity;
-
-        // Save the updated user document
-        await user.save();
-
-        res.status(200).json({ message: 'Cart updated successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-
-}
 const removeFromCart = async (req, res) => {
      try {
         const userSession = req.session.user_id;
@@ -207,7 +245,7 @@ const removeFromWishlist = async (req, res) => {
 module.exports = {
     addToCart,
     viewCart,
-    updateCartItem,
+      changeQuantity,
     removeFromCart,
     addToWishlist,
     loadWishlist,

@@ -83,7 +83,7 @@ user_route.post('/forget-password1',userController.resetPassword);
 user_route.post('/add-to-cart',cartController.addToCart);
 user_route.get('/cart',cartController.viewCart);
 
-user_route.all('/updateCartItem',cartController.updateCartItem);
+user_route.post('/changeQuantity',cartController.changeQuantity);
 user_route.get('/removeFromCart/:id',cartController.removeFromCart);
 user_route.get('/shopproduct/:id',userController.loadShopProduct);
 user_route.post('/addtoWishlist',cartController.addToWishlist);

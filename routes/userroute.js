@@ -3,6 +3,7 @@ const user_route=express();
 const session=require('express-session');
 
 const config = require("../config/config")
+const cookieParser = require('cookie-parser')
 
 user_route.use(session({
     secret: config.sessionSecret,
@@ -11,7 +12,8 @@ user_route.use(session({
   }));
 
 
-
+  user_route.use(cookieParser());
+  //user_route.use(express.cookieSession({ secret: 'secret', cookie: { maxAge: 60 * 60 * 1000 }}));
 
 const auth = require("../middleware/auth")
 
@@ -89,8 +91,11 @@ user_route.get('/shopproduct/:id',userController.loadShopProduct);
 user_route.post('/addtoWishlist',cartController.addToWishlist);
 user_route.get('/wishlist',cartController.loadWishlist);
 user_route.get('/removeFromWishlist/:id',cartController.removeFromWishlist);
-
-
+user_route.get('/account',auth.isLogin,userController.loadAccount);
+user_route.get('/edit-address/:id',auth.isLogin,userController.loadEditAddress);
+user_route.post('/edit-address',auth.isLogin,userController.editAddress);
+user_route.get('/add-address',auth.isLogin,userController.loadAddress)
+user_route.post('/add-address',userController.addAddress);
 
 
 

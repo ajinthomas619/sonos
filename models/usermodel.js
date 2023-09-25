@@ -63,7 +63,7 @@ type:Boolean
 },
 is_active:{
     type:Boolean,
-    required:true
+  
 },
 cart:{
     type:Array,

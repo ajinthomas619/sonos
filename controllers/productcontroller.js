@@ -38,7 +38,7 @@ const addProduct = async (req, res) => {
         const productData = await product.save();
         console.log(productData)
         if (productData) {
-            res.redirect('/productlist');
+            res.redirect('productlist');
         }
         else {
             const categoryData = await Category.find()

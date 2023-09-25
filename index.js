@@ -26,16 +26,16 @@ app.use(cors());
 
 
 
-app.get('/register',function(req,res){
+// app.get('/register',function(req,res){
 
-  res.render('register');
+//   res.render('register');
 
-})
-app.get('/login',function(req,res){
+// })
+// app.get('/login',function(req,res){
 
-    res.render('login');
+//     res.render('login');
   
-  })
+//   })
 
   //for user routes
   const userRoute=require('./routes/userroute')

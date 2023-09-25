@@ -1,4 +1,6 @@
 const mongoose=require('mongoose');
+const moment = require('moment-timezone');
+
 const orderData = mongoose.Schema({
     orderId: String,
     customerId: {
@@ -20,7 +22,7 @@ const orderData = mongoose.Schema({
     },
     paymentMethod:{
         type: Object,
-        default : 'COD'
+        default : 'PENDING'
     },
     shippingMethod: {
         type : String,

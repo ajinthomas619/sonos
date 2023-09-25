@@ -947,13 +947,13 @@
 <script>
 
 function changeQuantity( proId, count, unit) {
-    alert(proId)
+    
             let proTotal = document.getElementById(proId + 'pro-total').innerHTML;
             let price = document.getElementById(proId + 'price').innerHTML;
             proTotal = parseInt(proTotal);
             price = parseInt(price);
             let quantity = document.getElementById(proId).innerHTML
-            alert(unit);
+            
             if (parseInt(quantity) + 1 > unit) {
                 Swal.fire({
                     title: 'STOCK!',

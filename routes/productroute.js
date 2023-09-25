@@ -10,12 +10,14 @@ product_route.use(session({secret:config.sessionSecret}))
 
 
 
-product_route.set('view engine','ejs')
-product_route.set('views','./views/admin')
 
 
 product_route.set('view engine','ejs')
-product_route.set('views','./views/user')
+product_route.set('views',['./views/admin', './views/user'])
+
+// product_route.set('view engine','ejs')
+// product_route.set('views','./views/user')
+
 
 
 
@@ -89,7 +91,10 @@ product_route.get('/categories/:id',productController.deleteCategory);
 product_route.get('/orderdetails',orderController.loadOrderDetails);
 product_route.get('/checkout',orderController.loadPlaceOrder);
 product_route.get('/shopcategories/:id',productController.lookupProduct);
-
+product_route.post('/checkout',orderController.checkout);
+product_route.get('/order-success',orderController.orderSuccess);
+product_route.get('/order-cancel/:id',orderController.cancelOrder);
+product_route.post('/verify-payment',orderController.verifyPayment);
 
 
 module.exports = product_route;

@@ -13,6 +13,11 @@
     <meta property="og:image" content="">
     <!-- Favicon -->
     <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
     <!-- Template CSS -->
     <link rel="stylesheet" href="assets/css/main.css?v=3.4">
     
@@ -94,7 +99,7 @@
                                     </a>
                                 </div>
                                 <div class="header-action-icon-2">
-                                    <a class="mini-cart-icon" href="shop-cart.html">
+                                    <a class="mini-cart-icon" href="/cart">
                                         <img alt="Evara" src="assets/imgs/theme/icons/icon-cart.svg">
                                         <span class="pro-count blue">2</span>
                                     </a>
@@ -726,7 +731,11 @@
                                                 <!-- Display product price here -->
                                                 <%= product.ProductDetails[0].saleprice %> 
                                             </td>
-                                            <
+                                            <td>
+                                                <button type="submit" class="button button-add-to-cart" onclick="addToCart('<%= product.ProductDetails[0]._id %>' , '<%= product.ProductDetails[0].saleprice %>')">Add to cart</button>
+
+                                            </td>
+                            
                                         
                                            
                                             <td>
@@ -869,6 +878,29 @@
             </div>
         </div>
     </div>
+
+
+    <script>
+        function addToCart(proId,price){
+              $.ajax({
+                  url:'/add-to-cart',
+                  method:'post',
+                  data:{
+                      id:proId,
+                      price:price,
+                  },
+                  success:(response)=>{
+                      if(response == true){
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Added to cart',
+                              text: 'Product added to cart succesfully',
+                          })
+                      }
+                  }
+              })
+          }
+          </script>
     <!-- Vendor JS-->
     <script src="assets/js/vendor/modernizr-3.6.0.min.js"></script>
     <script src="assets/js/vendor/jquery-3.6.0.min.js"></script>

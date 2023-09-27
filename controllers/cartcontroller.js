@@ -7,6 +7,7 @@ const mongodb = require('mongodb')
 
 const addToCart = async (req, res) => {
     try {
+        console.log(req.body);
         const userId = req.session.user_id
         const proId = req.body.id
         const price = parseInt(req.body.price)
@@ -89,7 +90,7 @@ const viewCart = async (req, res) => {
             GrandTotal = GrandTotal+(qua*parseInt(data[i].ProductDetails[0].sale_price))
         }
         console.log()
-        res.render('cart' , {products:data , GrandTotal})
+        res.render('cart' , {products:data ,user:data, GrandTotal})
     }catch(err){
         console.log(err)
         res.send("Error")
@@ -202,6 +203,7 @@ const loadWishlist = async (req, res) => {
     try{
         let userSession = req.session.user_id;
         const oid = new mongodb.ObjectId(userSession);
+        const user = await userdata.find()
         let data = await userdata.aggregate([
             {$match:{_id:oid}},
             {$unwind:'$wishlist'},
@@ -220,7 +222,7 @@ const loadWishlist = async (req, res) => {
 
         ])
   
-        res.render('wishlist' , {products:data })
+        res.render('wishlist' , {products:data,user:user })
     }catch(err){
         console.log(err)
         res.send("Error")

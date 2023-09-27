@@ -1,10 +1,12 @@
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
+
 //const bcrypt = require('bcrypt');
 const { ObjectId } = require("mongodb");
 
 const config = require("../config/config");
 const mongoose = require('mongoose');
+const userdata = require("../models/usermodel");
 
 //add product
 const newProductLoad = async (req, res) => {
@@ -19,15 +21,15 @@ const newProductLoad = async (req, res) => {
 }
 const addProduct = async (req, res) => {
     try {
-        const categoryData = await Category.findOne({ name: req.body.category })
-        console.log(categoryData._id);
+        const categoryData = await Category.findOne({ categoryname: req.body.category })
+        console.log("dsfsd",categoryData);
         const Filenames = req.files.map((file) => file.filename);
         const product = new Product({
             productname: req.body.productname,
             description: req.body.description,
             regularprice: req.body.regularprice,
             saleprice: req.body.saleprice,
-            category: categoryData._id,
+            category: categoryData.categoryname,
             quantity: req.body.quantity,
             image: Filenames,
             brand:req.body.brand
@@ -81,12 +83,15 @@ const editProductLoad = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        console.log(req.body)
-     const imageFilenames = req.files.map((file)=>file.filename);
-     console.log(imageFilenames)
+        console.log("body:-",req.body)
+        console.log("fileee:-")
+        console.log(req.files);
+     const imageFilenames = req.files.map(file=>file.filename);
+     console.log("image file :-",imageFilenames)
      const categoryData = await Category.findOne({categoryname:req.body.category});
+     console.log("dsfkdaefd",categoryData)
         const id = req.params.id;
-        console.log(id)
+        console.log("iddd:-",id)
         const updateData = {
             productname: req.body.productname,
             description: req.body.description,
@@ -95,11 +100,14 @@ const updateProduct = async (req, res) => {
             category: categoryData.categoryname,
             Quantity: req.body.quantity,
             brand:req.body.brand
+
         };
-        console.log(updateData)
-        if (req.file) {
+        console.log("updated dataa:-",updateData)
+        
+        if (req.files) {
+            console.log("sdfdsfds",req.files)
             updateData.image = imageFilenames;
-            console.log(updateData.image)
+            console.log("update ====",updateData.image)
         }
 
         const updatedProduct = await Product.findByIdAndUpdate({ _id: new ObjectId(id.trim()) }, { $set: updateData }, { new: true });
@@ -227,11 +235,12 @@ const lookupProduct= async (req,res)=>{
         const id = req.params.id
        console.log("id"+id)
       const categoryName= await Category.findById(id);
+      const user = await userdata.find()
       const name = categoryName.categoryname
       console.log(name);
       const product =await Product.find({category:name})
        console.log('pname='+ product);
-       res.render('shopcategories',{product:product, products: product})
+       res.render('shopcategories',{product:product, products: product,user:user})
     }
     catch(error){
         console.log(error.message);

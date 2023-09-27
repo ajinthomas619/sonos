@@ -12,9 +12,9 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <link rel="shortcut icon" type="image/x-icon" href="/asset/imgs/theme/favicon.svg">
     <!-- Template CSS -->
-    <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="/asset/css/main.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -22,7 +22,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
-                <img src="assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+                <img src="/asset/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -169,14 +169,14 @@
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                            <a class="dropdown-item text-brand" href="#"><img src="/asset/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/asset/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/asset/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/asset/imgs/theme/flag-cn.png" alt="Français">中国人</a>
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/asset/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
@@ -228,7 +228,7 @@
                             <div class="text">
                                 <h6 class="mb-1">Deliver to</h6>
                                 <p class="mb-1">
-                                    <%=order.shippingAddress.customerName%> <br>
+                                    <%=order.shippingAddress.name%> <br>
                                         <%=order.shippingAddress.addressLine1 %> <br>
                                             <%=order.shippingAddress.city%>, <%=order.shippingAddress.state%> <br>
                                                     <%=order.shippingAddress.zipcode%> <br>
@@ -258,16 +258,30 @@
                                                 <td>
                                                     <a class="itemside" href="#">
                                                         <div class="left">
-                                                            <img src="/assets2/imgs/products/<%=order.products[i].productId.image[0]%>"
+                                                            <a class="itemside" href="#">
+                                                                <div class="left">
+                                                                    <% if (order.products && order.products[i] && order.products[i]._id && order.products[i]._id.image && order.products[i]._id.image[0]) { %>
+                                                                        <img src="/public/productsimages/<%= order.products[i]._id.image[0] %>"
+                                                                            width="40" height="40" class="img-xs" alt="Item">
+                                                                    <% } else { %>
+                                                                        <!-- Handle the case where 'image' is undefined or empty -->
+                                                                        <img src="/path/to/default-image.jpg" width="40" height="40" class="img-xs" alt="Item">
+                                                                    <% } %>
+                                                                </div>
+                                                                <div class="info"><a href="/orderdetails/<%= order.products[i]._id._id %>">
+                                                                    <%= order.products[i]._id.productname %>
+                                                                </a></div>
+                                                            </a>
+                                                            
                                                                 width="40" height="40" class="img-xs" alt="Item">
                                                         </div>
                                                         <div class="info"><a
-                                                                href="/product/<%=order.products[i].productId._id%>">
-                                                                <%=order.products[i].productId.name%>
+                                                                href="/orderdetails/<%=order.products[i]._id%>">
+                                                                <%=order.products[i]._id.name%>
                                                             </a> </div>
                                                     </a>
                                                 </td>
-                                                <td>₹ <%=order.products[i].productId.price%>
+                                                <td>₹ <%=order.products[i]._id.price%>
                                                 </td>
                                                 <td>
                                                     <%=order.products[i].quantity%>
@@ -275,7 +289,7 @@
                                                 <td>
                                                     <%=order.paymentDetails%>
                                                 </td>
-                                                <td class="text-end">₹ <%=order.products[i].productId.price
+                                                <td class="text-end">₹ <%=order.products[i]._id.price
                                                         *order.products[i].quantity %>
                                                 </td>
                                             </tr>
@@ -314,7 +328,7 @@
                             <div class="box shadow-sm bg-light">
                                 <h6 class="mb-15">Payment info</h6>
                                 <p>
-                                    <img src="assets/imgs/card-brands/2.png" class="border" height="20"> Master Card **** **** 4768 <br>
+                                    <img src="/asset/imgs/card-brands/2.png" class="border" height="20"> Master Card **** **** 4768 <br>
                                     Business name: Grand Market LLC <br>
                                     Phone: +1 (800) 555-154-52
                                 </p>
@@ -381,13 +395,13 @@
 </script>
 
     
-    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/vendors/select2.min.js"></script>
-    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="/asset/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/asset/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/asset/js/vendors/select2.min.js"></script>
+    <script src="/asset/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/asset/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
-    <script src="assets/js/main.js" type="text/javascript"></script>
+    <script src="/asset/js/main.js" type="text/javascript"></script>
 </body>
 
 </html>

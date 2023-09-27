@@ -901,7 +901,9 @@
                     <% for (let i=0; i < user.address.length; i++) { %>
                     <div class="row mt-20">
                         <div class="form-check form-check-inline">
-                            <input form="paymentform" class="form-check-input" type="radio" id="inlineRadio<%= i %>" name="addressId"  value="<%= user.address[i]._id %>">
+                            <input class="form-check-input" required
+                                                    value='<%= JSON.stringify(user.address[i]) %>' type="radio"
+                                                    name="address" id="address<%= i %>">
                             <label class="form-check-label" for="inlineRadio<%= i %>">
                                 <div class="card-body">
                                     <address id="address">

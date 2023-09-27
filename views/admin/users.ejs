@@ -15,6 +15,9 @@
     <link rel="shortcut icon" type="image/x-icon" href="/asset/imgs/theme/favicon.svg">
     <!-- Template CSS -->
     <link href="/asset/css/main.css?v=3.4" rel="stylesheet" type="text/css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body>
@@ -247,6 +250,17 @@
                                                         <td class="text-end">
                                                             <a href="#" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
                                                         </td>
+                                                      
+                                                            <!-- ...other user data columns... -->
+                                                            <td class="text-end">
+                                                                <%if(user.is_active == false){%>
+                                                                <button class="btn-danger btn-sm btn-block-user rounded font-sm mt-15" data-user-id="<%= user.id %>" data-user-status="active" onclick="unblockuser('<%= user.id %>')">Un block</button>
+
+                                                                <%}else{%>
+                                                                <button class="btn-danger btn-sm btn-block-user rounded font-sm mt-15" data-user-id="<%= user.id %>" data-user-status="active" onclick="blockuser('<%= user.id %>')">Block</button>
+                                                                    <%}%>
+                                                            </td>
+                                                      
                                                     </div>
                                                 </a>
                                             </td>
@@ -264,6 +278,51 @@
                 </div>
                 
         </footer>
+
+
+        <script>
+
+function blockuser(uid) {
+   alert(uid) 
+    alert("hi da");
+    $.ajax({
+        url: "/admin/blockuser",
+        method: "post",
+        data: {
+            id: uid
+        },
+        success: function () {
+            location.reload();
+        },
+        error: function (data) {
+            alert("error");
+        }
+    });
+}
+
+function unblockuser(uid) {
+   alert(uid) 
+    alert("hi da");
+    $.ajax({
+        url: "/admin/unblockuser",
+        method: "post",
+        data: {
+            id: uid
+        },
+        success: function () {
+            location.reload();
+        },
+        error: function (data) {
+            alert("error");
+        }
+    });
+}
+
+                            
+
+                
+            
+        </script>
     </main>
     <script src="/asset/js/vendors/jquery-3.6.0.min.js"></script>
     <script src="/asset/js/vendors/bootstrap.bundle.min.js"></script>

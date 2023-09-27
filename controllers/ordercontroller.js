@@ -7,7 +7,7 @@ const Razorpay = require('razorpay');
 const moment =require('moment')
 const mongoose = require('mongoose');
 const config = require("../config/config");
-const { log } = require("console");
+
 
 
 
@@ -17,33 +17,56 @@ const razorpay = new Razorpay({
 });
 
 
-const loadOrderDetails =  async(req,res)=>{
-    try{
+const loadOrderDetails = async (req, res) => {
+    try {
         const categories = await Category.find();
         const orderId = req.params.id;
+        console.log("iddddd", orderId)
+        console.log("sdfds", Product)
         const user = await User.findById(req.session.user_id);
-        const order =await Order.findOne({_id:orderId}).populate("Product.productId");
+        const order = await Order.findOne({ _id: orderId }).populate("products.productId");
+        console.log("orderrr", order);
         if (!order) {
             // Handle the case where the order is not found
             return res.status(404).send('Order not found');
         }
-     console.log("details of 0th product");
-     if (order.products.length > 0) {
-        console.log(order.products[0].productId);
-    }
-     console.log("address" + Order.shippingAddress.addressLine1);
-     res.render('orderdetails',{
-        order:order,
-        user:user,
-        categories:categories,
-     })
 
-    }    
-    catch(error){
+        console.log("details of 0th product");
+
+        if (order.products.length > 0) {
+            // Check if the first product is defined and has a 'name' property
+            const firstProduct = order.products[0].productId;
+            if (firstProduct && firstProduct.name) {
+                console.log("First product name:", firstProduct.name);
+            } else {
+                console.log("First product not found or missing 'name' property.");
+            }
+        }
+
+        console.log("address");
+
+        if (order.shippingAddress && order.shippingAddress.name) {
+            // Check if shippingAddress exists and has a 'name' property
+            console.log(order.shippingAddress.name);
+            console.log(order.shippingAddress.addressLine1);
+            console.log(order.shippingAddress.city);
+            console.log(order.shippingAddress.state);
+        } else {
+            console.log("Shipping address is missing or incomplete.");
+        }
+
+        res.render('orderdetails', {
+            order: order,
+            user: user,
+            categories: categories,
+        });
+    } catch (error) {
         console.log(error.message);
-        res.status(500).send("Internal Server Error")
+        res.status(500).send("Internal Server Error");
     }
 }
+
+
 const loadPlaceOrder =async(req,res)=>{
     try{
         const user = await User.findOne({_id:req.session.user_id}).populate("cart.proId");
@@ -126,7 +149,8 @@ res.render('successPage');
 
 const checkout = async(req,res)=>{
     try{
-        console.log('hehehe');
+        console.log('adressssssss');
+        console.log(req.body.addressId);
      const userId = req.session.user_id;
      const user = await User.findById(userId);
      const cart = await User.findById(req.session.user_id, {cart:1});
@@ -138,7 +162,7 @@ const checkout = async(req,res)=>{
         price:req.body.salePrice,
         products:cart.cart,
         totalAmount:req.body.total,
-        shippingAdress:req.body.address,
+        shippingAddress: JSON.parse(req.body.address),
         paymentMethod:req.body.payment_method,
      });
      console.log("payment option ===",req.body.payment_method);
@@ -270,6 +294,16 @@ const cancelOrder = async(req,res)=>{
     }
 }
 
+const loadOrderList = async(req,res)=>{
+    try{
+        const order = await Order.find()
+        console.log(order.length);
+        res.render('orderlist',{orders:order})
+    }
+    catch(error){
+        console.log(error.message)
+    }
+}
 
 
 module.exports={
@@ -279,5 +313,6 @@ module.exports={
     checkout,
     verifyPayment,
     cancelOrder,
+    loadOrderList
     
 }

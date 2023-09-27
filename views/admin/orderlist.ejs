@@ -12,9 +12,9 @@
     <meta property="og:url" content="">
     <meta property="og:image" content="">
     <!-- Favicon -->
-    <link rel="shortcut icon" type="image/x-icon" href="assets/imgs/theme/favicon.svg">
+    <link rel="shortcut icon" type="image/x-icon" href="/asset/imgs/theme/favicon.svg">
     <!-- Template CSS -->
-    <link href="assets/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="/asset/css/main.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body>
@@ -22,7 +22,7 @@
     <aside class="navbar-aside" id="offcanvas_aside">
         <div class="aside-top">
             <a href="index.html" class="brand-wrap">
-                <img src="assets/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
+                <img src="/asset/imgs/theme/logo.svg" class="logo" alt="Evara Dashboard">
             </a>
             <div>
                 <button class="btn btn-icon btn-aside-minimize"> <i class="text-muted material-icons md-menu_open"></i> </button>
@@ -169,14 +169,14 @@
                     <li class="dropdown nav-item">
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownLanguage" aria-expanded="false"><i class="material-icons md-public"></i></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownLanguage">
-                            <a class="dropdown-item text-brand" href="#"><img src="assets/imgs/theme/flag-us.png" alt="English">English</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-fr.png" alt="Français">Français</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-jp.png" alt="Français">日本語</a>
-                            <a class="dropdown-item" href="#"><img src="assets/imgs/theme/flag-cn.png" alt="Français">中国人</a>
+                            <a class="dropdown-item text-brand" href="#"><img src="/asset/imgs/theme/flag-us.png" alt="English">English</a>
+                            <a class="dropdown-item" href="#"><img src="/asset/imgs/theme/flag-fr.png" alt="Français">Français</a>
+                            <a class="dropdown-item" href="#"><img src="/asset/imgs/theme/flag-jp.png" alt="Français">日本語</a>
+                            <a class="dropdown-item" href="#"><img src="/asset/imgs/theme/flag-cn.png" alt="Français">中国人</a>
                         </div>
                     </li>
                     <li class="dropdown nav-item">
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="assets/imgs/people/avatar2.jpg" alt="User"></a>
+                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="#" id="dropdownAccount" aria-expanded="false"> <img class="img-xs rounded-circle" src="/asset/imgs/people/avatar2.jpg" alt="User"></a>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownAccount">
                             <a class="dropdown-item" href="#"><i class="material-icons md-perm_identity"></i>Edit Profile</a>
                             <a class="dropdown-item" href="#"><i class="material-icons md-settings"></i>Account Settings</a>
@@ -229,282 +229,54 @@
                             <thead>
                                 <tr>
                                     <th>#ID</th>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Email</th>
+                                    <th scope="col">payment Status</th>
+                                    <th scope="col">payment Method</th>
                                     <th scope="col">Total</th>
-                                    <th scope="col">Status</th>
+                                    <th scope="col"></th>
                                     <th scope="col">Date</th>
                                     <th scope="col" class="text-end"> Action </th>
                                 </tr>
                             </thead>
+                           
                             <tbody>
-                                <tr>
-                                    <td>0901</td>
-                                    <td><b>Marvin McKinney</b></td>
-                                    <td>marvin@example.com</td>
-                                    <td>$9.00</td>
-                                    <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                                    <td>03.12.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2323</td>
-                                    <td><b>Leslie Alexander</b></td>
-                                    <td>leslie@example.com</td>
-                                    <td>$46.61</td>
-                                    <td><span class="badge rounded-pill alert-warning">Pending</span></td>
-                                    <td>21.02.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1233</td>
-                                    <td><b>Esther Howard</b></td>
-                                    <td>esther@example.com</td>
-                                    <td>$12.00</td>
-                                    <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
-                                    <td>03.07.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>1233</td>
-                                    <td><b>Esther Howard</b></td>
-                                    <td>esther@example.com</td>
-                                    <td>$12.00</td>
-                                    <td><span class="badge rounded-pill alert-danger">Canceled</span></td>
-                                    <td>03.07.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2323</td>
-                                    <td><b>Jenny Wilson</b></td>
-                                    <td>jenny@example.com</td>
-                                    <td>$589.99</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>22.05.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2112</td>
-                                    <td><b>Marvin McKinney</b></td>
-                                    <td>marvin@example.com</td>
-                                    <td>$16.58</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>23.04.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>7897</td>
-                                    <td><b>Albert Flores</b></td>
-                                    <td>albert@example.com</td>
-                                    <td>$10.00</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>13.03.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2323</td>
-                                    <td><b>Wade Warren</b></td>
-                                    <td>wade@example.com</td>
-                                    <td>$105.55</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>23.09.2019</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2324</td>
-                                    <td><b>Jane Cooper</b></td>
-                                    <td>jane@example.com</td>
-                                    <td>$710.68</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>28.04.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2325</td>
-                                    <td><b>Savannah Nguyen</b></td>
-                                    <td>savannah@example.com</td>
-                                    <td>$710.68</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>23.03.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2326</td>
-                                    <td><b>Guy Hawkins</b></td>
-                                    <td>guy@example.com</td>
-                                    <td>$767.50</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>28.04.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2327</td>
-                                    <td><b>Darrell Steward</b></td>
-                                    <td>darrel@example.com</td>
-                                    <td>$406.27</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>14.07.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2328</td>
-                                    <td><b>Jane Cooper</b></td>
-                                    <td>jane@example.com</td>
-                                    <td>$601.13</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>18.03.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2329</td>
-                                    <td><b>Darlene Robertson</b></td>
-                                    <td>deriene@example.com</td>
-                                    <td>$948.55</td>
-                                    <td><span class="badge rounded-pill alert-success">Received</span></td>
-                                    <td>03.07.2022</td>
-                                    <td class="text-end">
-                                        <a href="#" class="btn btn-md rounded font-sm">Detail</a>
-                                        <div class="dropdown">
-                                            <a href="#" data-bs-toggle="dropdown" class="btn btn-light rounded btn-sm font-sm"> <i class="material-icons md-more_horiz"></i> </a>
-                                            <div class="dropdown-menu">
-                                                <a class="dropdown-item" href="#">View detail</a>
-                                                <a class="dropdown-item" href="#">Edit info</a>
-                                                <a class="dropdown-item text-danger" href="#">Delete</a>
-                                            </div>
-                                        </div> <!-- dropdown //end -->
-                                    </td>
-                                </tr>
+                                <% if (orders.length > 0) {
+                                    orders.forEach(function(order) { %>
+                                        <tr>
+                                            <td width="40%">
+                                                <a href="#" class="itemside">
+                                                    <div class="left">
+                                                        <img src="/asset/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
+                                                    </div>
+                                                    <div class="info pl-3">
+                                                        <h6 class="mb-0 title"><%= order.customerId %></h6>
+                                                        <small class="text-muted"></small>
+                                                        <td><%= order.paymentStatus %></td>
+                                                        <td><span class="badge rounded-pill alert-success"><%= order.paymentMethod %></span></td>
+
+                                                        <td><%= order.totalAmount %></td>
+
+                                                        <td class="text-end">
+                                                            <a href="/orderdetails/<%=orders[i]._id%>" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
+                                                        </td>
+                                                      
+                                                            <!-- ...other user data columns... -->
+                                                            
+                                                      
+                                                    </div>
+                                                </a>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                    <% });
+                                } else { %>
+                                    <tr>
+                                        <td colspan="5">orders not Found</td>
+                                    </tr>
+                                <% } %>
+
+
                             </tbody>
+
                         </table>
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
@@ -537,13 +309,13 @@
             </div>
         </footer>
     </main>
-    <script src="assets/js/vendors/jquery-3.6.0.min.js"></script>
-    <script src="assets/js/vendors/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/vendors/select2.min.js"></script>
-    <script src="assets/js/vendors/perfect-scrollbar.js"></script>
-    <script src="assets/js/vendors/jquery.fullscreen.min.js"></script>
+    <script src="/asset/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/asset/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/asset/js/vendors/select2.min.js"></script>
+    <script src="/asset/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/asset/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
-    <script src="assets/js/main.js" type="text/javascript"></script>
+    <script src="/asset/js/main.js" type="text/javascript"></script>
 </body>
 
 </html>

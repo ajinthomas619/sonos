@@ -33,6 +33,8 @@ admin_route.get('/home',adminauth.isLogin  ,adminController.loadDashboard);
 
 admin_route.get('/logout',adminauth.isLogin ,adminController.logout);
 admin_route.get('/users',adminController.adminDashboard);
+admin_route.post('/blockuser',adminController.blockuser);
+admin_route.post('/unblockuser',adminController.unblockuser);
 
 
  admin_route.get('*',function(req,res){

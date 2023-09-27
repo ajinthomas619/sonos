@@ -78,12 +78,77 @@ const adminDashboard = async(req,res)=>{
         console.log(error.message)
     }
 }
+const blockuser =async(req,res)=>{
+    
+    try {
+        console.log("bodyyy:===",req.body);
+        const id=req.body.id;
+        // const userData = await user.find({is_admin:0});
+        const userblock =await user.findByIdAndUpdate(id,{$set:{is_active:false}} , {new:true});
+        console.log("blockeduser == ",userblock);
+
+
+        if (userblock.is_active == false) {
+            // If nModified is 1, it means the update was successful
+            console.log("User blocked successfully");
+            res.status(200).json({ message: "User blocked successfully" });
+        } else {
+            // If nModified is not 1, it means no user was updated (possibly due to not found)
+            console.log("User not found or not updated");
+            res.status(404).json({ message: "User not found or not updated" });
+        }
+
+        
+       
+
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+const unblockuser =async(req,res)=>{
+    
+    try {
+        console.log("bodyyy:===",req.body);
+        const id=req.body.id;
+        // const userData = await user.find({is_admin:0});
+        const userunblock =await user.findByIdAndUpdate(id,{$set:{is_active:true}} , {new:true});
+        console.log("blockeduser == ",userunblock);
+
+
+        if (userunblock.is_active == true) {
+            // If nModified is 1, it means the update was successful
+            console.log("User unblocked successfully");
+            res.status(200).json({ message: "User  unblocked successfully" });
+        } else {
+            // If nModified is not 1, it means no user was updated (possibly due to not found)
+            console.log("User not found or not updated");
+            res.status(404).json({ message: "User not found or not updated" });
+        }
+
+        
+       
+
+
+
+    } catch (error) {
+        console.log(error.message);
+    }
+}
+
+
+
 
 module.exports = {
 loadLogin,
 verifyLogin,
 loadDashboard,
 logout,
-adminDashboard
+adminDashboard,
+blockuser,
+unblockuser
 
 }

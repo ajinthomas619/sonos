@@ -39,7 +39,8 @@ const orderData = mongoose.Schema({
 		type: Number,
 		default: 0,
 	},
-    shippingAddress : {},
+    shippingAddress : {}
+    ,
     orderStatus: {
         type : String,
         default: "PENDING"

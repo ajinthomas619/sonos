@@ -2,6 +2,7 @@ const user = require('../models/usermodel');
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
 const Order = require('../models/ordersmodel');
+const banner = require("../models/bannermodel");
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const twilio = require('twilio');
@@ -222,13 +223,50 @@ const verifyLogin = async (req, res) => {
 }
 const loadHome = async (req, res) => {
     try {
-        const categories = await Category.find();
-        const products = await Product.find();
+        var search='';
+        if(req.query.search){
+            search = req.query.search
+        }
+        console.log(req.query)
+        const query = req.query
+        const page = query['page ']; // Use trim() to remove leading/trailing spaces
+        // if(!req.query.page){
+        //     console.log("IFFFFFFFFFFFF")
+        //     page=1;
+        // }else{
+        //     console.log("Elseeeeeeeee")
+        //     page = req.query.page
+        // }
+        console.log("Page NUmber : " , page);
+        const limit =5;
+      
+        const categories = await Category.find({
+            $or:[
+                {categoryname:{$regex:'.*'+search+'.*'}}
+            ]
+        }).limit(limit*1)
+             .skip((page-1)*limit)
+             .exec()
+        const products = await Product.find({
+            $or:[
+                {productname:{$regex:'.*'+search+'.*'}}
+            ]
+        }).limit(limit*1)
+        .skip((page-1)*limit)
+        .exec()
+        const count = await Product.find({
+            $or:[
+                {productname:{$regex:'.*'+search+'.*'}}
+            ]
+        }).countDocuments();
+
+        const banners =await banner.find();
+        console.log("banner data ==",banners)
         const userData = await user.findById(req.session.user_id);
         console.log(userData)
         //  console.log(categories);
-        res.render('home', { categories: categories, products: products, user: userData })
-
+        res.render('home', { categories: categories, products: products, user: userData ,
+        totalPages : Math.ceil(count/limit),currentPage:page,banner:banners})
 
     }
     catch (error) {

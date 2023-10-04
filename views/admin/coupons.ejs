@@ -1,0 +1,195 @@
+<!DOCTYPE HTML>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Sonos Dashboard</title>
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="/asset/imgs/theme/favicon.svg">
+    <!-- Template CSS -->
+    <link href="/asset/css/main.css" rel="stylesheet" type="text/css" />
+</head>
+
+<%- include('../layouts/header2.ejs') %>
+        <section class="content-main">
+            <div class="content-header">
+                <div>
+                    <h2 class="content-title card-title">Coupons</h2>
+                    <p>Lorem ipsum dolor sit amet.</p>
+                </div>
+                <div>
+                    <a href="#" class="btn btn-light rounded font-md">Export</a>
+                    <a href="#" class="btn btn-light rounded  font-md">Import</a>
+                    <a href="/addproduct" class="btn btn-primary btn-sm rounded">Create new</a>
+                </div>
+            </div>
+            <div class="card mb-4">
+                <header class="card-header">
+                    <div class="row align-items-center">
+                        <div class="col col-check flex-grow-0">
+                            <div class="form-check ms-2">
+                                <input class="form-check-input" type="checkbox" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-12 me-auto mb-md-0 mb-3">
+                            <select class="form-select">
+                                <option selected>All category</option>
+                                <option>Electronics</option>
+                                <option>Clothes</option>
+                                <option>Automobile</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <input type="date" value="02.05.2022" class="form-control">
+                        </div>
+                        <div class="col-md-2 col-6">
+                            <select class="form-select">
+                                <option selected>Status</option>
+                                <option>Active</option>
+                                <option>Disabled</option>
+                                <option>Show all</option>
+                            </select>
+                        </div>
+                    </div>
+                </header> <!-- card-header end// -->
+                <% for (let i = 0; i < coupon.length; i++) { %>
+                    <article class="itemlist">
+                        <div class="row align-items-center">
+                            <!-- ... -->
+                            <div class="col-lg-4 col-sm-4 col-8 flex-grow-1 col-name">
+                                <a class="itemside" href="#">
+                                   
+                                    <div class="info">
+                                        <h6 class="mb-0"><%= coupon[i].couponname %></h6>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-price">
+                                <span><%= coupon[i].discount %></span>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-status">
+                               
+                                    <%= coupon[i].minamount %>
+                                </span>
+                            </div>
+                            <div class="col-lg-1 col-sm-2 col-4 col-date">
+                                <span><%= coupon[i].maxdiscount %></span>
+                            </div>
+                            <div class="col-lg-2 col-sm-2 col-4 col-action text-end">
+                                <%if(coupon[i].isListed == false){%>
+                                <button class="btn-danger btn-sm btn-block-user rounded font-sm mt-15" data-user-id="<%= coupon[i]._id %>" data-user-status="active" onclick="unblock('<%= coupon[i]._id %>')">List</button>
+
+                                <%}else{%>
+                                <button class="btn-danger btn-sm btn-block-user rounded font-sm mt-15" data-user-id="<%= coupon[i]._id %>" data-user-status="active" onclick="block('<%= coupon[i]._id %>')">UnList</button>
+                                    <%}%>
+                            </div>
+                           
+
+                        </div> <!-- row .// -->
+                    </article> <!-- itemlist  .// -->
+                <% } %>
+                 <!-- row .// -->
+                    </article> <!-- itemlist  .// -->
+                    <article class="itemlist">
+                        <div class="row align-items-center">
+                            <div class="col col-check flex-grow-0">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="">
+                                </div>
+                            </div>
+                          
+                           
+                        </div> <!-- row .// -->
+                    </article> <!-- itemlist  .// -->
+                </div> <!-- card-body end// -->
+            </div> <!-- card end// -->
+            <div class="pagination-area mt-30 mb-50">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-start">
+                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
+                        <li class="page-item"><a class="page-link" href="#">02</a></li>
+                        <li class="page-item"><a class="page-link" href="#">03</a></li>
+                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">16</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </section> <!-- content-main end// -->
+        <footer class="main-footer font-xs">
+            <div class="row pb-30 pt-15">
+                <div class="col-sm-6">
+                    <script>
+                    document.write(new Date().getFullYear())
+                    </script> ©, Evara - HTML Ecommerce Template .
+                </div>
+                <div class="col-sm-6">
+                    <div class="text-sm-end">
+                        All rights reserved
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </main>
+
+
+    <script>
+function block(uid) {
+//   const uid =  document.getElementById('couponId').value
+    alert(uid) 
+     alert("hi da");
+     $.ajax({
+         url: "/admin/blockcoupon",
+         method: "post",
+         data: {
+             id: uid
+         },
+         success: function () {
+             location.reload();
+         },
+         error: function (data) {
+             alert("error");
+         }
+     });
+ }
+ 
+ function unblock(uid) {
+    alert(uid) 
+     alert("hi da");
+     $.ajax({
+         url: "/admin/unblockcoupon",
+         method: "post",
+         data: {
+             id: uid
+         },
+         success: function () {
+             location.reload();
+         },
+         error: function (data) {
+             alert("error");
+         }
+     });
+ }
+ 
+</script>                     
+ 
+                 
+             
+         </script>
+    <script src="/asset/js/vendors/jquery-3.6.0.min.js"></script>
+    <script src="/asset/js/vendors/bootstrap.bundle.min.js"></script>
+    <script src="/asset/js/vendors/select2.min.js"></script>
+    <script src="/asset/js/vendors/perfect-scrollbar.js"></script>
+    <script src="/asset/js/vendors/jquery.fullscreen.min.js"></script>
+    <!-- Main Script -->
+    <script src="/asset/js/main.js" type="text/javascript"></script>
+</body>
+
+</html>

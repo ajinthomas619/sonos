@@ -88,7 +88,7 @@ product_route.post('/categories',categoryUpload.single('image'), productControll
 product_route.get('/editcategories/:id',productController.editCategoryLoad);
 product_route.post('/editcategories/:id',categoryUpload.single('image'),productController.updateCategory);
 product_route.get('/categories/:id',productController.deleteCategory);
-product_route.get('/orderdetails/:id',orderController.loadOrderDetails);
+product_route.get('/orderdetail/:id',orderController.loadOrderDetails);
 product_route.get('/checkout',orderController.loadPlaceOrder);
 product_route.get('/shopcategories/:id',productController.lookupProduct);
 product_route.post('/checkout',orderController.checkout);
@@ -96,6 +96,8 @@ product_route.get('/order-success',orderController.orderSuccess);
 product_route.get('/order-cancel/:id',orderController.cancelOrder);
 product_route.post('/verify-payment',orderController.verifyPayment);
 product_route.get('/orderlist',orderController.loadOrderList);
+product_route.get('/orderdetails/:id',orderController.loadOrderDetail);
+
 
 
 module.exports = product_route;

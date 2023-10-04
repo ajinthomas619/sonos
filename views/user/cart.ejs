@@ -216,7 +216,7 @@
                                             <td><%=index+1%></td>
                                             <td>
                                                 <!-- Display product image here -->
-                                                <img src="productimages/<%= product.ProductDetails[0].image %>" alt="<%= product.image %>">
+                                                <img src="productimages/<%= product.ProductDetails[0].image[0] %>" alt="<%= product.image %>">
                                             </td>
                                             <td>
                                                 <!-- Display product name here -->
@@ -262,13 +262,14 @@
                                     <div class="total-amount">
                                         <div class="left">
                                             <div class="coupon">
-                                                <form action="#" target="_blank">
+                                                <form action="/apply-coupon" target="" method="post" id="coupon-form">
                                                     <div class="form-row row justify-content-center">
                                                         <div class="form-group col-lg-6">
-                                                            <input class="font-medium" name="Coupon" placeholder="Enter Your Coupon">
+                                                            <input type="hidden" name="totalAmount" id="totalAmountField" value="<%= total %>">
+                                                            <input class="font-medium" name="couponname" placeholder="Enter Your Coupon" value="<%=coupon._id %>">
                                                         </div>
                                                         <div class="form-group col-lg-6">
-                                                            <button class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                            <button type="submit" class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
                                                         </div>
                                                     </div>
                                                 </form>
@@ -287,6 +288,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td class="cart_total_label">Cart Subtotal</td>
+                                                    <input type="hidden" name="totalAmount" id="totalAmountField" value="<%= total %>">
                                                     <td class="cart_total_amount"><span id="grand-total" class="font-lg fw-900 text-brand"><%=total  %></span></td>
                                                 </tr>
                                                 <tr>
@@ -297,7 +299,8 @@
                                                     
                                                   
                                                     <td class="cart_total_label">Total</td>
-                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand"><%=total  %></span></strong></td>
+                                                    <input type="hidden" name="totalAmount" id="totalAmountField" value="<%= total %>">
+                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand" name="total"><%=total  %></span></strong></td>
                                                   
                                                 </tr>
                                             </tbody>
@@ -383,6 +386,32 @@ function changeQuantity( proId, count, unit) {
             }
 
         }
+
+
+
+document.addEventListener("DOMContentLoaded", function() {
+        // Assuming you have arrays of product prices and quantities
+        const productPrices = [ products.map(product => product.ProductDetails[0].saleprice) ];
+        const quantities = [ products.map(product => product.quantity) ];
+
+        // Calculate totalAmount by summing up product prices * quantities
+        const totalAmount = productPrices.reduce((total, price, index) => {
+            return total + price * quantities[0];
+        }, 0);
+
+        // Update the hidden input field with the calculated totalAmount
+        document.getElementById("totalAmountField").value = totalAmount;
+
+        // Now you can use totalAmount in your form submission logic or other parts of your code
+        console.log("Total Amount:", totalAmount);
+    });
+
+// Assuming you have an HTML form with id "coupon-form"
+
+
+
+
+
 </script>
 
 

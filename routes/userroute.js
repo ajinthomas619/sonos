@@ -30,6 +30,7 @@ user_route.use(bodyParser.urlencoded({extended:true}))
 
 const userController=require("../controllers/usercontroller");
 const cartController=require("../controllers/cartcontroller");
+const couponController = require("../controllers/couponcontroller");
 
 
 user_route.get('/register',auth.isLogout,userController.loadRegister);
@@ -96,6 +97,9 @@ user_route.get('/edit-address/:id',auth.isLogin,userController.loadEditAddress);
 user_route.post('/edit-address',auth.isLogin,userController.editAddress);
 user_route.get('/add-address',auth.isLogin,userController.loadAddress)
 user_route.post('/add-address',userController.addAddress);
+
+
+user_route.post('/apply-coupon',couponController.applyCoupon);
 
 
 

@@ -1,5 +1,6 @@
 const Product = require("../models/productmodel");
 const userdata = require('../models/usermodel');
+const Coupon =  require("../models/couponmodel");
 const mongoose = require('mongoose');
 const { ObjectId } = require("mongodb");
 const mongodb = require('mongodb')
@@ -67,6 +68,7 @@ const viewCart = async (req, res) => {
     try{
         let userSession = req.session.user_id;
         const oid = new mongodb.ObjectId(userSession);
+        const coupons=await Coupon.find();
         let data = await userdata.aggregate([
             {$match:{_id:oid}},
             {$unwind:'$cart'},
@@ -90,7 +92,7 @@ const viewCart = async (req, res) => {
             GrandTotal = GrandTotal+(qua*parseInt(data[i].ProductDetails[0].sale_price))
         }
         console.log()
-        res.render('cart' , {products:data ,user:data, GrandTotal})
+        res.render('cart' , {products:data ,user:data,coupon:coupons, GrandTotal})
     }catch(err){
         console.log(err)
         res.send("Error")

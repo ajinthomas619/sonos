@@ -3,10 +3,16 @@ const Order = require("../models/ordersmodel");
 const User=require('../models/usermodel');
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
+const admin = require("../models/adminmodel");;
 const Razorpay = require('razorpay');
 const moment =require('moment')
 const mongoose = require('mongoose');
 const config = require("../config/config");
+const easyinvoice = require('easyinvoice');
+
+
+
+const { ObjectId } = require("mongodb");
 
 
 
@@ -19,52 +25,63 @@ const razorpay = new Razorpay({
 
 const loadOrderDetails = async (req, res) => {
     try {
+        const userData = await admin.findById(req.session.user_id);
         const categories = await Category.find();
         const orderId = req.params.id;
-        console.log("iddddd", orderId)
-        console.log("sdfds", Product)
+        console.log("iddddd", orderId);
+        console.log("sdfds", Product);
+       let  oid = new mongoose.Types.ObjectId(orderId)
         const user = await User.findById(req.session.user_id);
-        const order = await Order.findOne({ _id: orderId }).populate("products.productId");
+
+        const order = await Order.aggregate([
+            { $match: { _id: oid } },
+            {$unwind:'$products'},
+            {$project:{
+                proId:{'$toObjectId':'$products.proId'},
+                quantity:'$products.quantity',
+                address:'$shippingAddress',
+                orderedOn:'$createdAt',
+                orderStatus:'$orderStatus',
+                paymentMethod:'$paymentMethod'
+             }},
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'proId',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            }
+        ]);
+
         console.log("orderrr", order);
-        if (!order) {
-            // Handle the case where the order is not found
+
+        if (!order || order.length === 0) {
             return res.status(404).send('Order not found');
         }
 
-        console.log("details of 0th product");
+        // Assuming products are in the first element of the order array
+        const firstProduct = order[0].productDetails[0];
 
-        if (order.products.length > 0) {
-            // Check if the first product is defined and has a 'name' property
-            const firstProduct = order.products[0].productId;
-            if (firstProduct && firstProduct.name) {
-                console.log("First product name:", firstProduct.name);
-            } else {
-                console.log("First product not found or missing 'name' property.");
-            }
-        }
-
-        console.log("address");
-
-        if (order.shippingAddress && order.shippingAddress.name) {
-            // Check if shippingAddress exists and has a 'name' property
-            console.log(order.shippingAddress.name);
-            console.log(order.shippingAddress.addressLine1);
-            console.log(order.shippingAddress.city);
-            console.log(order.shippingAddress.state);
+        if (firstProduct && firstProduct.productname) {
+            console.log("First product name:", firstProduct.productname);
         } else {
-            console.log("Shipping address is missing or incomplete.");
+            console.log("First product not found or missing 'name' property.");
         }
 
-        res.render('orderdetails', {
+        // ... (remaining code remains unchanged)
+
+        res.render('orderdetail', {
             order: order,
             user: user,
             categories: categories,
+            admin: userData
         });
     } catch (error) {
         console.log(error.message);
         res.status(500).send("Internal Server Error");
     }
-}
+};
 
 
 const loadPlaceOrder =async(req,res)=>{
@@ -155,6 +172,8 @@ const checkout = async(req,res)=>{
      const user = await User.findById(userId);
      const cart = await User.findById(req.session.user_id, {cart:1});
     // console.log(cart.cart);
+    console.log("Carttttttttt===============>" , cart.cart)
+    Object.freeze(cart);
      console.log("req n===",req.body);
      const order=new Order({
         customerId: userId,
@@ -282,11 +301,15 @@ console.log("REACHED THE DESTINATIPON");
 }
 const cancelOrder = async(req,res)=>{
     try {
-        const id  =req.params.id;
+
+        const orderId  =req.params.id;
+        let  oid = new mongoose.Types.ObjectId(orderId)
+        console.log("iddd candds ==",oid);
         const update = {
             orderStatus : 'CANCELLED'
         }
-        const order = await Order.findByIdAndUpdate(id,update);
+        const order = await Order.findByIdAndUpdate(oid,update);
+        console.log("updated order===",order);
         res.redirect('/account');
 
     } catch (error) {
@@ -296,15 +319,165 @@ const cancelOrder = async(req,res)=>{
 
 const loadOrderList = async(req,res)=>{
     try{
-        const order = await Order.find()
-        console.log(order.length);
-        res.render('orderlist',{orders:order})
+        const userData = await admin.findById(req.session.user_id);
+        const orderId = req.params.id;
+        console.log("iddddd", orderId)
+        const order = await Order.find();
+        const orders = await Order.find({ customerId: req.session.user_id });
+   
+      
+        const user = await User.findById(req.session.user_id);
+        if (orders.shippingAddress && orders.shippingAddress.name) {
+            // Check if shippingAddress exists and has a 'name' property
+            console.log(orders.shippingAddress.name);
+            console.log(orders.shippingAddress.addressLine1);
+            console.log(orders.shippingAddress.city);
+            console.log(orders.shippingAddress.state);
+        } else {
+            console.log("Shipping address is missing or incomplete.");
+        }
+        res.render('orderlist',{orders:order,user:user,admin:userData})
     }
     catch(error){
         console.log(error.message)
     }
 }
 
+
+const loadOrderDetail = async (req, res) => {
+    try {
+        console.log(req.params);
+        const userData = await admin.findById(req.session.user_id);
+        const categories = await Category.find();
+        const orderId = req.params.id;
+        console.log("iddddd", orderId);
+        console.log("sdfds", Product);
+       let  oid = new mongoose.Types.ObjectId(orderId);
+       console.log("oidddd===",oid);
+        const user = await User.findById(req.session.user_id);
+
+        const order = await Order.aggregate([
+            { $match: { _id: oid } },
+            {$unwind:'$products'},
+            {$project:{
+               
+                proId:{'$toObjectId':'$products.proId'},
+                quantity:'$products.quantity',
+                address:'$shippingAddress',
+                orderedOn:'$createdAt',
+                orderStatus:'$orderStatus',
+                paymentMethod:'$paymentMethod'
+             }},
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'proId',
+                    foreignField: '_id',
+                    as: 'productDetails'
+                }
+            }
+        ]);
+
+        console.log("orderrr", order);
+        console.log("proooo=====",order[0].productDetails);
+  
+
+        if (!order || order.length === 0) {
+            return res.status(404).send('Order not found');
+        }
+
+        // Assuming products are in the first element of the order array
+        // Assuming products are in the first element of the order array
+        const firstProduct = order[0].productDetails[0];
+
+        if (firstProduct && firstProduct.productname) {
+            console.log("First product name:", firstProduct.productname);
+        } else {
+            console.log("First product not found or missing 'name' property.");
+        }
+        let products = [];
+        order[0].productDetails.forEach(product => {
+            let item ={
+                quantity:product.quantity,
+                description: product.productname, 
+                price:product.saleprice 
+            }
+            products.push(item)  
+            
+        });
+        console.log("hdsbcjkd",products);
+
+        // ... (remaining code remains unchanged)
+
+        res.render('orderdetails', {
+            order: order,
+            user: user,
+            categories: categories,
+            admin: userData,
+            products:products
+        });
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+
+
+const printInvoice = async (req, res) => {
+    console.log("rfkdsklfmn");
+  try {
+    console.log(req.body);
+    const orderId = req.body.id;
+    const order = await Order.findById(orderId).populate('products:productId');
+    if (!order) {
+      return res.status(404).json({ error: 'Order not found' });
+    }
+
+    const products = order.Products.map((item) => ({
+      description: item.productId.productname,
+      quantity: item.quantity,
+      price: item.totalAmount,
+      'tax-rate': 0,
+    }));
+
+    const invoiceData = {
+      images: {
+        logo: '/assets/imgs/theme/logo1.png',
+      },
+      sender: {
+        company: 'Sonos',
+        address: 'Edathunthikal buldings,pwd road,maradu',
+        zip: '688002',
+        city: 'Ernakulam',
+        state: 'Kerala',
+        country: 'india',
+      },
+      client: {
+        company: req.body.clientName,
+        address: req.body.clientAddress,
+        zip: req.body.clientZip,
+        city: req.body.clientCity,
+        state: req.body.clientState,
+        country: 'INDIA',
+      },
+      information: {
+        'invoice number': req.body.invoiceNumber,
+        date: req.body.invoiceDate,
+      },
+      products,
+      'bottom-notice': 'Kindly pay your invoice within 15 days',
+    };
+
+    const pdfBase64String = await easyinvoice.createInvoice(invoiceData);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename=invoice.pdf');
+    res.end(pdfBase64String);
+  } catch (error) {
+    console.log(error.message);
+  }
+};
 
 module.exports={
     loadOrderDetails,
@@ -313,6 +486,8 @@ module.exports={
     checkout,
     verifyPayment,
     cancelOrder,
-    loadOrderList
+    loadOrderList,
+    loadOrderDetail,
+    printInvoice
     
 }

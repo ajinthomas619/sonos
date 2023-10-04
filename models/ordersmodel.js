@@ -7,14 +7,18 @@ const orderData = mongoose.Schema({
         type : mongoose.Schema.Types.ObjectId,
         ref:'userdata'
     },
-    products : [{
-        productId: {
-            type : mongoose.Schema.Types.ObjectId,
-            ref: 'products'
-        },
-        quantity: Number,
-        price: Number,
-    }],
+    // products : [{
+    //     productId: {
+    //         type : mongoose.Schema.Types.ObjectId,
+    //         ref: 'products'
+    //     },
+    //     quantity: Number,
+    //     price: Number,
+    //     productname:String
+    // }]
+    products:{
+        type:Array,
+    },
     // paymentMethod : String,
     paymentStatus: {
         type : String,

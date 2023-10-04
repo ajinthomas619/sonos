@@ -1,5 +1,6 @@
 const Product = require("../models/productmodel");
-const Category = require("../models/categorymodel");
+const Category = require("../models/categorymodel")
+const admin = require("../models/adminmodel");;
 
 //const bcrypt = require('bcrypt');
 const { ObjectId } = require("mongodb");
@@ -11,9 +12,11 @@ const userdata = require("../models/usermodel");
 //add product
 const newProductLoad = async (req, res) => {
     try {
+        
+        const userData = await admin.findById(req.session.user_id);
         const categoryData = await Category.find()
         console.log(categoryData)
-        res.render('addproduct',{categories:categoryData});
+        res.render('addproduct',{categories:categoryData,admin:userData});
     } catch (error) {
         console.log(error.message);
     }
@@ -21,6 +24,8 @@ const newProductLoad = async (req, res) => {
 }
 const addProduct = async (req, res) => {
     try {
+        
+        const userData = await admin.findById(req.session.user_id);
         const categoryData = await Category.findOne({ categoryname: req.body.category })
         console.log("dsfsd",categoryData);
         const Filenames = req.files.map((file) => file.filename);
@@ -45,7 +50,7 @@ const addProduct = async (req, res) => {
         else {
             const categoryData = await Category.find()
             console.log(categoryData.name)
-            res.render('addproduct', { message: 'Something went wrong',categories:categoryData });
+            res.render('addproduct', { message: 'Something went wrong',categories:categoryData ,admin:userData});
         }
 
     } catch (error) {
@@ -54,8 +59,9 @@ const addProduct = async (req, res) => {
 }
 const productLoad = async (req, res) => {
     try {
+        const userData = await admin.findById(req.session.user_id);
         const productData = await Product.find({});
-        res.render('productlist', { products: productData })
+        res.render('productlist', { products: productData,admin:userData })
     } catch (error) {
         console.log(error.message)
     }
@@ -63,6 +69,7 @@ const productLoad = async (req, res) => {
 //edit product
 const editProductLoad = async (req, res) => {
     try {
+        const userData = await admin.findById(req.session.user_id);
         const id = req.params.id;
         console.log(id)
         const categoryData = await Category.find();
@@ -72,7 +79,7 @@ const editProductLoad = async (req, res) => {
          console.log(productData)
         // console.log(categoryData)
         if (productData) {
-            res.render('editproduct', { products: productData,categories:categoryData });
+            res.render('editproduct', { products: productData,categories:categoryData ,admin:userData});
         } else {
             res.redirect('/admin/home');
         }
@@ -138,8 +145,9 @@ const deleteProduct = async (req, res) => {
 }
 const loadCategory = async (req, res) => {
     try {
+        const userData = await admin.findById(req.session.user_id);
         const categoryData = await Category.find().lean(); // Fetch all categories from the database
-        res.render('categories', { categories: categoryData }); // Pass the categories to the view
+        res.render('categories', { categories: categoryData,admin:userData }); // Pass the categories to the view
     } catch (error) {
         console.log(error.message);
     }
@@ -175,12 +183,13 @@ const addCategory = async (req, res) => {
 //edit category
 const editCategoryLoad = async (req, res) => {
     try {
+        const userData = await admin.findById(req.session.user_id);
         const id = req.params.id;
         console.log(id)
         const categoryData = await Category.findById({ _id: new ObjectId(id.trim()) }).lean();
         console.log(categoryData)
         if (categoryData) {
-            res.render('editcategories', { categories: categoryData });
+            res.render('editcategories', { categories: categoryData,admin:userData });
         } else {
             res.redirect('/admin/home');
         }

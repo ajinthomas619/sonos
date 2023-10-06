@@ -7,6 +7,11 @@ const session=require("express-session")
 const config=require("../config/config")
 product_route.use(session({secret:config.sessionSecret}))
 
+product_route.use(session({
+  secret: config.sessionSecret,
+  resave: false,
+  saveUninitialized: false
+}));
 
 
 
@@ -97,6 +102,7 @@ product_route.get('/order-cancel/:id',orderController.cancelOrder);
 product_route.post('/verify-payment',orderController.verifyPayment);
 product_route.get('/orderlist',orderController.loadOrderList);
 product_route.get('/orderdetails/:id',orderController.loadOrderDetail);
+product_route.post('/print-invoice',orderController.printInvoice);
 
 
 

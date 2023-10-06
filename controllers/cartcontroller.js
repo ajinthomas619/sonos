@@ -8,96 +8,87 @@ const mongodb = require('mongodb')
 
 const addToCart = async (req, res) => {
     try {
-        console.log(req.body);
-        const userId = req.session.user_id
-        const proId = req.body.id
-        const price = parseInt(req.body.price)
-        const quantity=1;
-        let userData = await userdata.findByIdAndUpdate(userId ,
-                    { $push: { cart: {proId,
-                    quantity:quantity,
-                    } } }
-        )
-        res.json(true)
-        // const productId = req.body.id;
-        // console.log('productid:-'+productId)
-        // const product = await Product.findById(productId);
-        // console.log(product)
-    
+        // Extracting data from the request body and session
+        const userId = req.session.user_id;
+        const proId = req.body.id;
+        const price = parseInt(req.body.price);
+        const quantity = 1;
 
-        // if (!product) {
-        //     return res.status(404).json({ message: 'Product not found' });
-        // }
+        // Updating user's cart using MongoDB $push operation
+        let userData = await userdata.findByIdAndUpdate(userId, {
+            $push: {
+                cart: {
+                    proId:proId,
+                    price:price,
+                    quantity: quantity,
+                },
+            },
+        });
+        console.log("u d===",userData);
 
-        //  const userId = req.session.user_id;
-        //  console.log(userId)
-        //  console.log('user id:-'+userId)
-        //  const user = await userdata.findById(userId)
-        //  console.log('user:-'+user)
-        //  if(!user){
-        //     return res.status(404).json({message:'User not found'})
-        //  }
+        // Checking if the product already exists in the user's cart
+        const existingItem = userData.cart.find((item) => item.proId === proId);
+        console.log("itemmm===",existingItem);
 
-        //  const quantity = parseInt(req.body.quantity, 10);
-        //  console.log('quantity:' +quantity)
-        // const existingItem = user.cart.items.find((item)=>(
-        //     item.productId.equals(productId) 
-        // ));
+        if (existingItem) {
+            existingItem.quantity += quantity;
+        } else {
+            userData.cart.push({ proId, quantity });
+        }
 
-        // if (existingItem) {
-        //     existingItem.quantity += quantity;
-        // } else {
-        //    user. cart.items.push({
-        //         product: product._id,
-        //         quantity: quantity,
-        //         price: product.price,
-        //     });
-        // }
+        // Saving the updated user data
+        await userData.save();
 
-
-        // await user.save(); // Save the cart instance, not Cart model
-
-        // res.status(200).json({ message: 'Product added to cart successfully' });
+        // Sending a JSON response
+        res.json(true);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
 
+
 const viewCart = async (req, res) => {
-    try{
+    try {
+        // Extracting user session ID and retrieving cart items from the database
         let userSession = req.session.user_id;
         const oid = new mongodb.ObjectId(userSession);
-        const coupons=await Coupon.find();
+        const coupons = await Coupon.find();
         let data = await userdata.aggregate([
-            {$match:{_id:oid}},
-            {$unwind:'$cart'},
-            {$project:{
-                proId:{'$toObjectId':'$cart.proId'},
-                quantity:'$cart.quantity',
-                // size:'$cart.size'
-            }},
-            {$lookup:{
-                from:'products',
-                localField:'proId', 
-                foreignField:'_id',
-                as:'ProductDetails',
-            }},
+            // Aggregating user data and cart items from the database
+            { $match: { _id: oid } },
+            { $unwind: '$cart' },
+            {
+                $project: {
+                    proId: { $toObjectId: '$cart.proId' },
+                    quantity: '$cart.quantity',
+                },
+            },
+            {
+                $lookup: {
+                    from: 'products',
+                    localField: 'proId',
+                    foreignField: '_id',
+                    as: 'ProductDetails',
+                },
+            },
+        ]);
 
-
-        ])
-        let GrandTotal = 0
-        for(let i=0;i<data.length;i++){
+        // Calculating the Grand Total by iterating through cart items and product prices
+        let GrandTotal = 0;
+        for (let i = 0; i < data.length; i++) {
             let qua = parseInt(data[i].quantity);
-            GrandTotal = GrandTotal+(qua*parseInt(data[i].ProductDetails[0].sale_price))
+            GrandTotal = GrandTotal + qua * parseInt(data[i].ProductDetails[0].sale_price);
         }
-        console.log()
-        res.render('cart' , {products:data ,user:data,coupon:coupons, GrandTotal})
-    }catch(err){
-        console.log(err)
-        res.send("Error")
-        }
-    }
+
+        // Rendering the cart page with cart items, user data, coupons, and Grand Total
+        res.render('cart', { products: data, user: data, coupon: coupons, GrandTotal });
+    } catch (err) {
+        console.log(err);
+        res.send('Error');
+    }
+};
+
 
 // const updateCartItem = async (req, res) => {
 //     try {

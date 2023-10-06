@@ -3,6 +3,7 @@ const Order = require("../models/ordersmodel");
 const User=require('../models/usermodel');
 const Product = require("../models/productmodel");
 const Category = require("../models/categorymodel");
+const Coupon =  require("../models/couponmodel");
 const admin = require("../models/adminmodel");;
 const Razorpay = require('razorpay');
 const moment =require('moment')
@@ -13,6 +14,7 @@ const easyinvoice = require('easyinvoice');
 
 
 const { ObjectId } = require("mongodb");
+const { log } = require("console");
 
 
 
@@ -25,7 +27,7 @@ const razorpay = new Razorpay({
 
 const loadOrderDetails = async (req, res) => {
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const categories = await Category.find();
         const orderId = req.params.id;
         console.log("iddddd", orderId);
@@ -42,7 +44,9 @@ const loadOrderDetails = async (req, res) => {
                 address:'$shippingAddress',
                 orderedOn:'$createdAt',
                 orderStatus:'$orderStatus',
-                paymentMethod:'$paymentMethod'
+                paymentMethod:'$paymentMethod',
+                discount:'$discount',
+                totalAmount:'$netTotal'
              }},
             {
                 $lookup: {
@@ -55,6 +59,8 @@ const loadOrderDetails = async (req, res) => {
         ]);
 
         console.log("orderrr", order);
+        console.log("dsjlfnds===");
+        console.log(order[0].productDetails);
 
         if (!order || order.length === 0) {
             return res.status(404).send('Order not found');
@@ -90,6 +96,8 @@ const loadPlaceOrder =async(req,res)=>{
         const userCart =await User.findOne({_id:req.session.user_id});
         console.log(req.body);
         const categories = await Category.find();
+        const coupons=await Coupon.find();
+        console.log('codj==',coupons);
         let oid = new mongoose.Types.ObjectId(req.session.user_id)
         let data = await User.aggregate([
             {$match:{_id:oid}},
@@ -122,6 +130,7 @@ const loadPlaceOrder =async(req,res)=>{
             categories:categories,
             data:data,
             GrandTotal,
+            coupon:coupons
         })
     }
     catch(error){
@@ -166,21 +175,50 @@ res.render('successPage');
 
 const checkout = async(req,res)=>{
     try{
+        console.log("cpbody===",req.body);
         console.log('adressssssss');
         console.log(req.body.addressId);
      const userId = req.session.user_id;
      const user = await User.findById(userId);
+
      const cart = await User.findById(req.session.user_id, {cart:1});
     // console.log(cart.cart);
     console.log("Carttttttttt===============>" , cart.cart)
     Object.freeze(cart);
      console.log("req n===",req.body);
+     let GrandTotal = req.body.total;
+     let discountedAmount = 0;
+
+if(req.body.ordercouponname!=''){
+    const coupon = await Coupon.findOne({ couponname:req.body.ordercouponname });
+    if(coupon){
+        if (req.body.total >= coupon.minamount) {
+             discountedAmount = req.body.total - (req.body.total * coupon.discount) / 100;
+            discountedAmount = Math.min(discountedAmount, coupon.maxdiscount);
+
+             GrandTotal =req.body.total -discountedAmount
+
+
+            console.log("discounted amount==", discountedAmount);
+        }
+
+    }
+
+}
+
+
+
+
+
+     
      const order=new Order({
         customerId: userId,
         quantity:req.body.quantity,
         price:req.body.salePrice,
         products:cart.cart,
         totalAmount:req.body.total,
+        netTotal:GrandTotal,
+        discount:discountedAmount,
         shippingAddress: JSON.parse(req.body.address),
         paymentMethod:req.body.payment_method,
      });
@@ -218,7 +256,7 @@ const checkout = async(req,res)=>{
         else if(req.body.payment_method === "online"){
             console.log("hello razr");
            console.log('yeaaa');
-            const amount = req.body.total*100;
+            const amount = GrandTotal*100;
             const options = {
                 amount:amount,
                 currency:"INR",
@@ -319,7 +357,7 @@ const cancelOrder = async(req,res)=>{
 
 const loadOrderList = async(req,res)=>{
     try{
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const orderId = req.params.id;
         console.log("iddddd", orderId)
         const order = await Order.find();
@@ -347,7 +385,7 @@ const loadOrderList = async(req,res)=>{
 const loadOrderDetail = async (req, res) => {
     try {
         console.log(req.params);
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const categories = await Category.find();
         const orderId = req.params.id;
         console.log("iddddd", orderId);
@@ -421,63 +459,89 @@ const loadOrderDetail = async (req, res) => {
         res.status(500).send("Internal Server Error");
     }
 };
-
-
-
 const printInvoice = async (req, res) => {
-    console.log("rfkdsklfmn");
-  try {
-    console.log(req.body);
-    const orderId = req.body.id;
-    const order = await Order.findById(orderId).populate('products:productId');
-    if (!order) {
-      return res.status(404).json({ error: 'Order not found' });
-    }
+    try {
+      console.log(req.body);
+      const orderId = req.body.orderId;
+      const orderData = await Order.findOne({ _id: orderId }).populate(
+        "products.proId"
+      );
+      console.log("de===",orderData);
+      console.log(orderData.pro);
+  
+      const product = orderData.products.map((item, i) => {
+        return {
+          quantity: parseInt(item.quantity), // Use item.quantity
+          description: item.proId.productname, // Use item.productId.productName
+          price: parseInt(item.proId.saleprice), // Use item.productId.salePrice
+          total: parseInt(item.totalAmount),
+          "tax-rate": 0,
+        };
+      });
+  
+      console.log("product");
+      console.log(product);
+      var data = {
+        //   "images": {
+        //       "logo": "/assets/imgs/theme/logo1.png"
+        //  },
+        // Your own data
+        sender: {
+          company: "Sonos",
+          address: "rks building, HSR Layout,Banglore",
+          zip: "550855",
+          city: "Banglore",
+          state: "Karnataka",
+          country: "India",
+        },
+        // Your recipient
+        client: {
+          company: orderData.shippingAddress.name,
+          address: orderData.shippingAddress.addressLine1,
+          zip: orderData.shippingAddress.pinCode,
+          city: orderData.shippingAddress.city,
+          state: orderData.shippingAddress.state,
+          country: "INDIA",
+        },
+  
+        information: {
+          // Invoice number
+          number: orderData._id,
+          // Invoice data
+          date: orderData.createdAt,
+          // Invoice due date
+          "due-date": orderData.createdAt,
+        },
+        // The products you would like to see on your invoice
+        // Total values are being calculated automatically
+        products: product,
+        // The message you would like to display on the bottom of your invoice
+        "bottom-notice": "Kindly pay your invoice within 15 days.",
+        // Settings to customize your invoice
+        settings: {
+          currency: "INR", // See documentation 'Locales and Currency' for more info. Leave empty for no currency.
+          // "locale": "nl-NL", // Defaults to en-US, used for number formatting (See documentation 'Locales and Currency')
+          // "margin-top": 25, // Defaults to '25'
+          // "margin-right": 25, // Defaults to '25'
+          // "margin-left": 25, // Defaults to '25'
+          // "margin-bottom": 25, // Defaults to '25'
+          // "format": "A4", // Defaults to A4, options: A3, A4, A5, Legal, Letter, Tabloid
+          // "height": "1000px", // allowed units: mm, cm, in, px
+          // "width": "500px", // allowed units: mm, cm, in, px
+          // "orientation": "landscape", // portrait or landscape, defaults to portrait
+        },
+      };
+  
+      console.log("data");
+      console.log(data);
+  
+      res.json(data);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
 
-    const products = order.Products.map((item) => ({
-      description: item.productId.productname,
-      quantity: item.quantity,
-      price: item.totalAmount,
-      'tax-rate': 0,
-    }));
 
-    const invoiceData = {
-      images: {
-        logo: '/assets/imgs/theme/logo1.png',
-      },
-      sender: {
-        company: 'Sonos',
-        address: 'Edathunthikal buldings,pwd road,maradu',
-        zip: '688002',
-        city: 'Ernakulam',
-        state: 'Kerala',
-        country: 'india',
-      },
-      client: {
-        company: req.body.clientName,
-        address: req.body.clientAddress,
-        zip: req.body.clientZip,
-        city: req.body.clientCity,
-        state: req.body.clientState,
-        country: 'INDIA',
-      },
-      information: {
-        'invoice number': req.body.invoiceNumber,
-        date: req.body.invoiceDate,
-      },
-      products,
-      'bottom-notice': 'Kindly pay your invoice within 15 days',
-    };
-
-    const pdfBase64String = await easyinvoice.createInvoice(invoiceData);
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'attachment; filename=invoice.pdf');
-    res.end(pdfBase64String);
-  } catch (error) {
-    console.log(error.message);
-  }
-};
 
 module.exports={
     loadOrderDetails,
@@ -489,5 +553,6 @@ module.exports={
     loadOrderList,
     loadOrderDetail,
     printInvoice
+  
     
 }

@@ -8,7 +8,7 @@ const mongoose =require('mongoose');
 
 const loadAddBanner = async(req,res)=>{
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         res.render('addbanner',{admin:userData})
         
     } catch (error) {
@@ -18,7 +18,7 @@ const loadAddBanner = async(req,res)=>{
 
 const loadBanner = async(req,res)=>{
     try{
-    const userData = await admin.findById(req.session.user_id);
+    const userData = await admin.findById(req.session.admin_id);
     const banners =await banner.find();
     console.log("banner===",banners);
     res.render('banners',{admin:userData,banner:banners});

@@ -70,7 +70,7 @@ admin_route.get('/addbanner',bannerController.loadAddBanner);
 admin_route.post('/addbanner',bannerUpload.single('image'),bannerController.addBanner);
 admin_route.get('/banners',bannerController.loadBanner);
 admin_route.get('/banners/:id',bannerController.deleteBanner);
-admin_route.post('/print-invoice',orderController.printInvoice);
+
 
 
  admin_route.get('*',function(req,res){

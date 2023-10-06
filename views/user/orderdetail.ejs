@@ -208,30 +208,29 @@
                                 </thead>
                                 <tbody>
                                     <% var sum = 0 %>
-                                    <tr>
-                                        <% if (order[0].productDetails[0].proId && order[0].productDetails[0].proId.image && order[0].productDetails[0].proId.image[0]) { %>
-                                            <td class="image product-thumbnail"><img src="public/productimages/<%= order[0].productDetails[0].image[0] %>" alt="#"></td>
-                                        <% } else { %>
-                                            <td class="image product-thumbnail">Image Not Available</td>
-                                        <% } %>                                        <td class="product-des product-name">
-                                            <h5 class="product-name"><a href="shop-product-right.html"><%=order[0].productDetails[0].productname%></a></h5>
-                                        
-                                        </td>
-                                        <td class="price" data-title="Price"><span>₹<%=order[0].productDetails[0].saleprice%></span></td>
-                                        <td class="text-center" data-title="Stock">
-                                            <div class="">
-                                                <!-- <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a> -->
-                                                <span class="qty-val"><%=order[0].quantity%></span>
-                                                <!-- <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a> -->
-                                            </div>
-                                        </td>
-                                        <td class="text-right" data-title="Cart">
-                                            <span>₹<%= order[0].quantity * order[0].productDetails[0].saleprice %></span>
-                                            <%sum = sum + order[0].quantity * order[0].productDetails[0].saleprice %>
-                                        </td>
-                                        <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash"></i></a></td>
-                                    </tr>
-                                    
+                                    <% for (var i = 0; i < order.length; i++) { %>
+                                        <tr>
+                                            <% if (order[i].productDetails[0].proId && order[i].productDetails[0].proId.image && order[i].productDetails[0].proId.image[0]) { %>
+                                                <td class="image product-thumbnail"><img src="public/productimages/<%= order[i].productDetails[0].proId.image[0] %>" alt="#"></td>
+                                            <% } else { %>
+                                                <td class="image product-thumbnail">Image Not Available</td>
+                                            <% } %>
+                                            <td class="product-des product-name">
+                                                <h5 class="product-name"><a href="shop-product-right.html"><%=order[i].productDetails[0].productname%></a></h5>
+                                            </td>
+                                            <td class="price" data-title="Price"><span>₹<%=order[i].productDetails[0].saleprice%></span></td>
+                                            <td class="text-center" data-title="Stock">
+                                                <div class="">
+                                                    <span class="qty-val"><%=order[i].quantity%></span>
+                                                </div>
+                                            </td>
+                                            <td class="text-right" data-title="Cart">
+                                                <span>₹<%= order[i].quantity * order[i].productDetails[0].saleprice %></span>
+                                                <% sum = sum + order[i].quantity * order[i].productDetails[0].saleprice %>
+                                            </td>
+                                            <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                                        </tr>
+                                    <% } %>
                                 </tbody>
                             </table>
                         </div>
@@ -240,7 +239,6 @@
                         </div>
                         <div class="divider center_icon mt-50 mb-50"><i class="fi-rs-fingerprint"></i></div>
                         <div class="row mb-50">
-                           
                             <div class="col-lg-6 col-md-12">
                                 <div class="border p-md-4 p-30 border-radius cart-totals">
                                     <div class="heading_s1 mb-3">
@@ -254,24 +252,39 @@
                                                     <td class="cart_total_amount"><span class="font-lg fw-900 text-brand">₹<%=sum%></span></td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="cart_total_label">Shipping</td>
-                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> Free Shipping</td>
+                                                    <td class="cart_total_label">discount</td>
+                                                    <td class="cart_total_amount"> <i class="ti-gift mr-5"></i> <%= order[0].discount%></td>
                                                 </tr>
                                                 <tr>
                                                     <td class="cart_total_label">Total</td>
-                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">₹<%=sum%></span></strong></td>
+                                                    <td class="cart_total_amount"><strong><span class="font-xl fw-900 text-brand">₹<%=order[0].totalAmount%></span></strong></td>
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
                                     <a href="/order-cancel/<%=order[0]._id%>" class="btn "></i>Cancel Order</a>
+                                    <button onclick="invoice('<%=order[0]._id%>')"> print</button>
                                 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+        
     </main>
     <footer class="main">
         <section class="newsletter p-30 text-white wow fadeIn animated">
@@ -400,10 +413,33 @@
         </div>
     </div>
     <!-- Vendor JS-->
+<script>
+    function invoice(orderId) {
+        
+              $.ajax({
+                  url: '/print-invoice',
+                  method: 'post',
+                  data: { orderId },
+                  success: function (res) {
+                      // alert('success')
+                      console.log(res);
+                      // Pass 'res' directly to easyinvoice.createInvoice
+                      easyinvoice.createInvoice(res, function (result) {
+                      easyinvoice.download('myInvoice.pdf', result.pdf);
+                          // alert('finished')
+          //	you can download like this as well:
+          //	easyinvoice.download();
+          //	easyinvoice.download('myInvoice.pdf');   
+      });
+                  }
+              });
+          }
+</script>
 
 
-
-
+<script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+<script src="https://unpkg.com/pdfjs-dist/build/pdf.min.js"></script>
+<script src="https://unpkg.com/pdfjs-dist/build/pdf.worker.min.js"></script>
 
 
     <script src="/assets/js/vendor/modernizr-3.6.0.min.js"></script>

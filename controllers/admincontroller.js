@@ -25,7 +25,7 @@ const verifyLogin = async(req,res)=>{
         const passwordMatch =  await bcrypt.compare(password,userData.password);
         if(passwordMatch){
             if(userData.is_admin == 1){
-                req.session.user_id = userData._id;
+                req.session.admin_id = userData._id;
                 res.redirect("/admin/home");
                
             }
@@ -51,7 +51,7 @@ const verifyLogin = async(req,res)=>{
 }
 const loadDashboard =async(req,res)=>{
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         
         res.render('home',{admin:userData});
 
@@ -62,7 +62,7 @@ const loadDashboard =async(req,res)=>{
 const logout = async(req,res)=>{
     try {
         req.session.destroy();
-        res.redirect('/admin');
+        res.redirect('/admin/login');
         
     } catch (error) {
         console.log(error.message)

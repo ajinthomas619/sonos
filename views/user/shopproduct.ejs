@@ -440,11 +440,7 @@
                                         <div class="bt-1 border-color-1 mt-30 mb-30"></div>
                                         <div class="detail-extralink">
                                             
-                                            <div class="detail-qty border radius">
-                                                <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                                <span class="qty-val">1</span>
-                                                <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
-                                            </div>
+                                      
                                             <div class="product-extra-link2">
                                                
 
@@ -453,9 +449,8 @@
                                                     <button type="submit" class="button button-add-to-cart" onclick="addToCart('<%=products._id%>' , '<%=products.saleprice%>')">Add to cart</button>
                                                 </div>
                                                 <a aria-label="Add To Wishlist" class="action-btn hover-up"
-                                                    href="addTooWishlist"><i class="fi-rs-heart"></i></a>
-                                                <a aria-label="Compare" class="action-btn hover-up"
-                                                    href="shop-compare.html"><i class="fi-rs-shuffle"></i></a>
+                                                onclick="addToWishlist('<%=products._id%>' )"><i class="fi-rs-heart"></i></a>
+                                           
                                               
                                             </div>
                                
@@ -753,11 +748,9 @@
                                                             data-bs-toggle="modal" data-bs-target="#quickViewModal
 "><i class="fi-rs-search"></i></a>
                                                         <a aria-label="Add To Wishlist"
-                                                            class="action-btn small hover-up" href="shop-wishlist.html"
+                                                            class="action-btn small hover-up" 
                                                             tabindex="0"><i class="fi-rs-heart"></i></a>
-                                                        <a aria-label="Compare" class="action-btn small hover-up"
-                                                            href="shop-compare.html" tabindex="0"><i
-                                                                class="fi-rs-shuffle"></i></a>
+                                                        
                                                     </div>
                                                     <div
                                                         class="product-badges product-badges-position product-badges-mrg">
@@ -836,6 +829,31 @@
                 }
             })
         }
+
+
+        function addToWishlist(proId){
+           
+            $.ajax({
+                url:'/addtoWishlist',
+                method:'post',
+                data:{
+                    id:proId,
+                   
+                },
+                success:(response)=>{
+                    if(response == true){
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Added to wishlist',
+                            text: 'Product added to wishlist succesfully',
+                        })
+                    }
+                }
+            })
+        }
+
+
+
         </script>
     <!-- Vendor JS-->
     <script src="/assets/js/vendor/modernizr-3.6.0.min.js"></script>

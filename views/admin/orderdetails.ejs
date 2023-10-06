@@ -316,10 +316,10 @@
                 <a class="btn btn-secondary print ms-2"
                   ><i class="icon material-icons md-print"></i
                 ></a>
-                <button type="button" id="buttonSearch" onclick="invoice()">
-                  xcvxcv
+                <button type="button" id="buttonSearch" onclick="invoice('<%= order._id %>')">
+                  print
                 </button>
-                <a onclick="invoice()">xcvxcv</a>
+             
               </div>
             </div>
           </header>
@@ -491,51 +491,34 @@
     <script src="/asset/js/vendors/jquery.fullscreen.min.js"></script>
     <!-- Main Script -->
     <script src="/asset/js/main.js" type="text/javascript"></script>
-    <script type="text/javascript">
-      function invoice() {
-        //alert("Hello");
-        
-        const data = {
-          images: {
-            logo: "https://public.easyinvoice.cloud/img/logo_en_original.png",
-            background:
-              "https://public.easyinvoice.cloud/img/watermark-draft.jpg",
-          },
-          sender: {
-            company: "Sonos",
-            address: "Rk Complex,HSR Layout,Banglore",
-            zip: "655221",
-            city: "Bangalore",
-            country: "INDIA",
-          },
-          client: {
-            name: "<%= order[0].address.name %>",
-            address: "<%= order[0].address.addressLine1 %>",
-            zip: "<%= order[0].address.pinCode %>",
-            city: "<%= order[0].address.city %>",
-            country: "INDIA",
-            email:"<%= order[0].address.email%>"
-          },
-          information: {
-            number: "<%= order[0]._id %>",
-            date: "<%= order[0].orderedOn.toLocaleDateString() %>",
-            
-          },
-          products: [],
-            
-          
-          "bottom-notice": "Thankyou",
-          settings: {
-            currency: "INR",
-          },
-        };
-        easyinvoice.createInvoice(data, function (result) {
-          easyinvoice.download("myInvoice.pdf", result.pdf);
-          //	you can download like this as well:
-          //	easyinvoice.download();
-          //	easyinvoice.download('myInvoice.pdf');
+    <script >
+
+
+
+function invoice(orderId) {
+
+        $.ajax({
+            url: '/print-invoice',
+            method: 'post',
+            data: { orderId },
+            success: function (res) {
+                // alert('success')
+                console.log(res);
+                // Pass 'res' directly to easyinvoice.createInvoice
+                easyinvoice.createInvoice(res, function (result) {
+                easyinvoice.download('myInvoice.pdf', result.pdf);
+                    // alert('finished')
+    //	you can download like this as well:
+    //	easyinvoice.download();
+    //	easyinvoice.download('myInvoice.pdf');   
+});
+            }
         });
-      }
+    }
+
+
+      
+      
 
       function orderCancel(orderId) {
         try {

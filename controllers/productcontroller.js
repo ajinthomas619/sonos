@@ -13,7 +13,7 @@ const userdata = require("../models/usermodel");
 const newProductLoad = async (req, res) => {
     try {
         
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const categoryData = await Category.find()
         console.log(categoryData)
         res.render('addproduct',{categories:categoryData,admin:userData});
@@ -25,7 +25,7 @@ const newProductLoad = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
         
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const categoryData = await Category.findOne({ categoryname: req.body.category })
         console.log("dsfsd",categoryData);
         const Filenames = req.files.map((file) => file.filename);
@@ -59,7 +59,7 @@ const addProduct = async (req, res) => {
 }
 const productLoad = async (req, res) => {
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const productData = await Product.find({});
         res.render('productlist', { products: productData,admin:userData })
     } catch (error) {
@@ -69,7 +69,7 @@ const productLoad = async (req, res) => {
 //edit product
 const editProductLoad = async (req, res) => {
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const id = req.params.id;
         console.log(id)
         const categoryData = await Category.find();
@@ -145,7 +145,7 @@ const deleteProduct = async (req, res) => {
 }
 const loadCategory = async (req, res) => {
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const categoryData = await Category.find().lean(); // Fetch all categories from the database
         res.render('categories', { categories: categoryData,admin:userData }); // Pass the categories to the view
     } catch (error) {
@@ -183,7 +183,7 @@ const addCategory = async (req, res) => {
 //edit category
 const editCategoryLoad = async (req, res) => {
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const id = req.params.id;
         console.log(id)
         const categoryData = await Category.findById({ _id: new ObjectId(id.trim()) }).lean();

@@ -969,18 +969,18 @@
                                                     <th>SubTotal</th>
                                                     <td class="product-subtotal" colspan="2">₹<%=GrandTotal%>
                                                     </td>
-                                                    <input type="hidden" name="total" value="<%=GrandTotal%>">
+                                                    <input type="hidden" name="total"  value="<%=GrandTotal%>">
 
                                                 </tr>
                                                 <tr>
-                                                    <th>Shipping</th>
-                                                    <td colspan="2"><em>Free Shipping</em></td>
+                                                    <th> Discount</th>
+                                                    <td colspan="2" ><em>₹<span id="discountval">0</span></em></td>
                                                 </tr>
                                                 <tr>
                                                     <th>Total</th>
                                                     <td colspan="2" class="product-subtotal">₹<span
-                                                            class="font-xl text-brand fw-900">
-                                                            ₹<%=GrandTotal%>
+                                                            class="font-xl text-brand fw-900" id="grandTotal">
+                                                            <%=GrandTotal%>
                                                         </span></td>
                                                 </tr>
                                 </tbody>
@@ -1007,6 +1007,7 @@
                                 </label>
                             </div>
                         </div>
+                        <input  type="hidden"   class="font-medium" name="ordercouponname" id="ordercouponname" placeholder="Enter Your Coupon" value="">
 
 
                        <!-- <form action="" id="paymentform" name="paymentform"> -->
@@ -1015,6 +1016,32 @@
                        <!-- </form> -->
 
                         </form>
+
+
+                        <div class="mb-30 mt-50">
+                            <div class="heading_s1 mb-3">
+                                <h4>Apply Coupon</h4>
+                            </div>
+                            <div class="total-amount">
+                                <div class="left">
+                                    <div class="coupon">
+                                        <form action="/apply-coupon" target="" method="post" id="coupon-form">
+                                            <div class="form-row row justify-content-center">
+                                                <div class="form-group col-lg-6">
+                                                    <input type="hidden" name="totalAmount" id="totalAmountField" value="<%= GrandTotal %>">
+                                                    <input class="font-medium" name="couponname" id="couponname" placeholder="Enter Your Coupon" value="<%=coupon._id %>">
+                                                </div>
+                                                <div class="form-group col-lg-6">
+                                                    <button type="submit" class="btn  btn-sm"><i class="fi-rs-label mr-10"></i>Apply</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     </div>
                 </div>
             </div>
@@ -1162,7 +1189,6 @@
         console.log("hiiiiiii")
         console.log(formData);
         console.log("heyyyyy")
-        
 
         $.ajax({
         url: "/checkout",
@@ -1225,6 +1251,39 @@
         }
   })
 }
+$(document).ready(function() {
+  
+    $('#coupon-form').submit(function(event) {
+
+        event.preventDefault();
+    var couponname=$('input[name="couponname"]').val()
+    var totalAmount=parseFloat($('#totalAmountField').val());
+    $.ajax({
+        url:'/apply-coupon',
+        method:'POST',
+        data :{couponname:couponname,totalAmount:totalAmount},
+        success:function(response){
+            if(response.success){
+                document.getElementById('ordercouponname').value=couponname;
+            $('#grandTotal').text(response.GrandTotal);
+            $('#discountval').text(response.discountedAmount);
+           document.getElementById('couponname').disabled=true
+
+            }
+            else{
+                $('#discountedAmount').text('Coupon not found');
+                $('#grandTotal').empty(); 
+
+            }
+        },
+        error: function(error) {
+            console.error('Error:', error);
+            alert("internal server error");
+            
+        }
+    });
+});
+});
 
     
     

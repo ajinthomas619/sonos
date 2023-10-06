@@ -16,9 +16,16 @@ const orderData = mongoose.Schema({
     //     price: Number,
     //     productname:String
     // }]
-    products:{
-        type:Array,
-    },
+    products: [{
+        proId: {
+            type : mongoose.Schema.Types.ObjectId,
+            ref: 'products'
+
+
+        },
+        quantity: Number,
+        price: Number,
+    }],
     // paymentMethod : String,
     paymentStatus: {
         type : String,
@@ -56,7 +63,15 @@ const orderData = mongoose.Schema({
     updatedAt:{
         type: Date,
         default: () => moment.tz(Date.now(), "Asia/Kolkata")
+    },
+    discount:{
+        type:Number
+
+    },
+    netTotal:{
+        type:Number
     }
+    
 }
 
 )

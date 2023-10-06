@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 
 const loadAddCoupon = async(req,res)=>{
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         res.render('addcoupon',{admin:userData})  
     } catch (error) {
         console.log(error.message)
@@ -20,7 +20,7 @@ const loadAddCoupon = async(req,res)=>{
 
 const loadCoupon = async(req,res)=>{
     try {
-        const userData = await admin.findById(req.session.user_id);
+        const userData = await admin.findById(req.session.admin_id);
         const coupons=await Coupon.find();
         // console.log("coupons",coupons[0].code);
         console.log("coupons",coupons);
@@ -122,11 +122,12 @@ const unblockCoupon =async(req,res)=>{
 const applyCoupon = async (req, res) => {
     try {
     
-        const { couponname, totalAmount } = req.body;
+        let { couponname, totalAmount } = req.body;
         console.log("coupon body ====", req.body);
         const coupon = await Coupon.findOne({ couponname });
         console.log('coupon====', coupon);
-      
+        totalAmount =parseFloat(totalAmount)
+      console.log("amt===",totalAmount);
 
 
         if (!coupon) {
@@ -141,8 +142,11 @@ console.log("Is totalAmount >= minamount?", totalAmount >= coupon.minamount);
             let discountedAmount = totalAmount - (totalAmount * coupon.discount) / 100;
             discountedAmount = Math.min(discountedAmount, coupon.maxdiscount);
 
+            const GrandTotal =totalAmount -discountedAmount
+
+
             console.log("discounted amount==", discountedAmount);
-            res.json({ discountedAmount });
+            res.status(200).json({ success:true,discountedAmount,GrandTotal });
         } else {
             // If the totalAmount is less than the minimum amount required for the coupon
             res.status(400).json({ error: 'Total amount does not meet the minimum requirement for this coupon' });

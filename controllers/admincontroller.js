@@ -1,5 +1,8 @@
 const admin = require("../models/adminmodel");
 const user = require("../models/usermodel");
+const Order = require("../models/ordersmodel");
+const Product = require("../models/productmodel");
+const Category = require("../models/categorymodel");
 const bcrypt = require('bcrypt');
 
 const config = require("../config/config");
@@ -52,8 +55,109 @@ const verifyLogin = async(req,res)=>{
 const loadDashboard =async(req,res)=>{
     try {
         const userData = await admin.findById(req.session.admin_id);
+        const revenue = await Order.aggregate([
+            {
+                $group:{
+                    _id:null,
+                    totalAmount:{$sum:"$totalAmount"},
+                },
+            },
+        ]);
+        const totalRevenue = revenue[0].totalAmount.toLocaleString("en-IN");
+        const orderCount = await Order.count();
+        const productCount = await Product.count();
+        const categoryCount = await Category.count();
+        const userCount =await user.count();
+
+        const monthlyRevenue = await Order.aggregate([
+            {
+                $match:{
+                    createdAt:{
+                        $gte:new Date(new Date().getFullYear(),new Date().getMonth(),1),
+                        $lt:new Date(
+                            new Date().getFullYear(), 
+                            new Date().getMonth() + 1 ,
+                             1 ),
+                        
+                    },
+                },
+            },
+    
+            {
+                $group:{
+                        _id:null,
+                        total:{$sum :"$totalAmount"}
+
+                },
+            },
         
-        res.render('home',{admin:userData});
+    ]);
+     const mRevenue = monthlyRevenue[0].total.toLocaleString("en-IN") ;
+     
+     const monthlySales =await Order.aggregate([
+        {
+            $project:{
+               year:{$year:"$createdAt"},
+               month:{$month:"$createdAt"},
+            },
+        },
+        {
+            $group:{
+                _id:{year:"$year",month:"$month"},
+                totalOrders:{$sum:1},
+            },
+        },
+        {
+            $sort:{
+                "_id.year":1,
+                "_id.month":1,
+            },
+        },
+     ])
+     
+
+     const graphDataSales=[];
+     for (let month=1;month<=12;month++){
+        const resultForMonth = monthlySales.find(
+            (result) => result._id.month === month
+        );
+        if(resultForMonth){
+            graphDataSales.push(resultForMonth.totalOrders)
+        }
+        else{
+            graphDataSales.push(0);
+        }
+     }
+     console.log(("formattefd res====",graphDataSales));
+
+     const productCountData = await Product.aggregate([
+        {
+            $group:{
+               _id:"$category",
+               count:{$sum:1}, 
+            },
+        },
+     ]);
+     const categoryNames = productCountData.map((item) => item._id);
+     const categoryCounts = productCountData.map((item)=>item.count) ;
+  
+
+
+        
+        
+        res.render('home',
+        {admin:userData,
+            totalRevenue: totalRevenue,
+            orderCount:orderCount,
+            productCount:productCount,
+            categoryCount:categoryCount,
+            monthlyRevenue:mRevenue,
+            graphDataSales:graphDataSales,
+            categoryCounts:categoryCount,
+            categoryNames:categoryNames,
+            userCount:userCount,
+        
+        });
 
     } catch (error) {
         console.log(error.message);
@@ -70,9 +174,10 @@ const logout = async(req,res)=>{
 }
 const adminDashboard = async(req,res)=>{
     try{
+        const adminData = await admin.findById(req.session.admin_id);
         const usersData = await user.find({is_admin:0})
         console.log(usersData.length);
-        res.render('users',{users:usersData})
+        res.render('users',{users:usersData,admin:adminData})
     }
     catch(error){
         console.log(error.message)

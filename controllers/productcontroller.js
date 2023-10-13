@@ -24,39 +24,46 @@ const newProductLoad = async (req, res) => {
 }
 const addProduct = async (req, res) => {
     try {
-        
         const userData = await admin.findById(req.session.admin_id);
-        const categoryData = await Category.findOne({ categoryname: req.body.category })
-        console.log("dsfsd",categoryData);
+        const categoryData = await Category.findOne({ categoryname: req.body.category });
+        console.log("dsfsd", categoryData);
         const Filenames = req.files.map((file) => file.filename);
+
+        // Validate the product price
+        const quantity =parseFloat(req.body.quantity)
+        const regularPrice = parseFloat(req.body.regularprice);
+        const salePrice = parseFloat(req.body.saleprice);
+        if (isNaN(regularPrice) || isNaN(salePrice) || isNaN(quantity) || regularPrice < 0 || salePrice < 0 || quantity<0) {
+            const categoryData = await Category.find();
+            return res.render('addproduct', { message: 'Invalid data', categories: categoryData, admin: userData });
+        }
+
         const product = new Product({
             productname: req.body.productname,
             description: req.body.description,
-            regularprice: req.body.regularprice,
-            saleprice: req.body.saleprice,
+            regularprice: regularPrice,
+            saleprice: salePrice,
             category: categoryData.categoryname,
             quantity: req.body.quantity,
             image: Filenames,
-            brand:req.body.brand
-
-
+            brand: req.body.brand
         });
-        console.log(product)
+
+        console.log(product);
         const productData = await product.save();
-        console.log(productData)
+        console.log(productData);
         if (productData) {
             res.redirect('productlist');
+        } else {
+            const categoryData = await Category.find();
+            console.log(categoryData.name);
+            res.render('addproduct', { message: 'Something went wrong', categories: categoryData, admin: userData });
         }
-        else {
-            const categoryData = await Category.find()
-            console.log(categoryData.name)
-            res.render('addproduct', { message: 'Something went wrong',categories:categoryData ,admin:userData});
-        }
-
     } catch (error) {
         console.log(error.message);
     }
-}
+};
+
 const productLoad = async (req, res) => {
     try {
         const userData = await admin.findById(req.session.admin_id);
@@ -91,13 +98,27 @@ const editProductLoad = async (req, res) => {
 const updateProduct = async (req, res) => {
     try {
         console.log("body:-",req.body)
+        
         console.log("fileee:-")
         console.log(req.files);
+        const userData = await admin.findById(req.session.admin_id);
+      
+        const quantity =parseFloat(req.body.quantity)
+        const regularPrice = parseFloat(req.body.regularprice);
+        const salePrice = parseFloat(req.body.saleprice);
+        if (isNaN(regularPrice) || isNaN(salePrice) || isNaN(quantity) || regularPrice < 10 || salePrice < 10 || quantity<1) {
+            const categoryData = await Category.find();
+          
+            return res.render('addproduct', { message: 'Invalid data', categories: categoryData, admin: userData });
+        }
      const imageFilenames = req.files.map(file=>file.filename);
      console.log("image file :-",imageFilenames)
      const categoryData = await Category.findOne({categoryname:req.body.category});
+   
+          
      console.log("dsfkdaefd",categoryData)
         const id = req.params.id;
+
         console.log("iddd:-",id)
         const updateData = {
             productname: req.body.productname,
@@ -105,7 +126,7 @@ const updateProduct = async (req, res) => {
             regularprice: req.body.regularprice,
             saleprice: req.body.saleprice,
             category: categoryData.categoryname,
-            Quantity: req.body.quantity,
+            quantity: req.body.quantity,
             brand:req.body.brand
 
         };

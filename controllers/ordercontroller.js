@@ -175,15 +175,13 @@ res.render('successPage');
 
 const checkout = async(req,res)=>{
     try{
-        console.log("cpbody===",req.body);
-        console.log('adressssssss');
-        console.log(req.body.addressId);
+     
      const userId = req.session.user_id;
      const user = await User.findById(userId);
 
      const cart = await User.findById(req.session.user_id, {cart:1});
     // console.log(cart.cart);
-    console.log("Carttttttttt===============>" , cart.cart)
+  
     Object.freeze(cart);
      console.log("req n===",req.body);
      let GrandTotal = req.body.total;
@@ -224,21 +222,23 @@ if(req.body.ordercouponname!=''){
      });
      console.log("payment option ===",req.body.payment_method);
      const orderSuccess = await order.save();
-     console.log('order==',order);
+  
      console.log("orderrrrr===",order._id);
      const orderId = order._id;
-     console.log(orderSuccess);
-     console.log(orderId);
+     
      if(orderSuccess){
         for(const cartItem of user.cart){
-            const product = await Product.findById(cartItem.productId);
+            const product = await Product.findById(cartItem.proId);
+       
             if(product){
-                product.quantity = cartItem.quantity;
+                product.quantity -= cartItem.quantity;
                 await product.save();
             }
+           
+            console.log("updated quantity === ",product.quantity);
         }
         user.cart = user.cart.filter(cartItem => {
-            return !cart.cart.some(orderItem => orderItem.productId === cartItem.productId);
+            return !cart.cart.some(orderItem => orderItem.productId === cartItem.proId);
         });
 
         await user.save();
@@ -254,14 +254,14 @@ if(req.body.ordercouponname!=''){
 
         }
         else if(req.body.payment_method === "online"){
-            console.log("hello razr");
-           console.log('yeaaa');
+          
             const amount = GrandTotal*100;
             const options = {
                 amount:amount,
                 currency:"INR",
                 receipt:orderId,
             };
+        
             razorpay.orders.create(options,(err,order)=>{
                 if(!err){
                    console.log("Razorpay order created");
@@ -357,12 +357,23 @@ const cancelOrder = async(req,res)=>{
 
 const loadOrderList = async(req,res)=>{
     try{
+        const pageNumber = parseInt(req.query.page) || 1; 
+        const pageSize = 10; 
+        const totalOrders = await Order.countDocuments();
+        const totalPages = Math.ceil(totalOrders / pageSize);
         const userData = await admin.findById(req.session.admin_id);
         const orderId = req.params.id;
         console.log("iddddd", orderId)
-        const order = await Order.find();
-        const orders = await Order.find({ customerId: req.session.user_id });
+        const orders = await Order.find()
+        .sort({createdAt:-1})
+        .skip((pageNumber-1)*pageSize)
+        .limit(pageSize);
+        console.log("order var = ",orders);
+
    
+        console.log("pageNumber:", pageNumber);
+        console.log("pageSize:", pageSize);
+        console.log("totalPages:", totalPages);
       
         const user = await User.findById(req.session.user_id);
         if (orders.shippingAddress && orders.shippingAddress.name) {
@@ -374,7 +385,7 @@ const loadOrderList = async(req,res)=>{
         } else {
             console.log("Shipping address is missing or incomplete.");
         }
-        res.render('orderlist',{orders:order,user:user,admin:userData})
+        res.render('orderlist',{orders:orders,user:user,admin:userData,totalPages: totalPages, currentPage: pageNumber })
     }
     catch(error){
         console.log(error.message)

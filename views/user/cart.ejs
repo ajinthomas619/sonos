@@ -228,9 +228,9 @@
                                             </td>
                                             <td>
                                                 <!-- Display product quantity here -->
-                                                <button class="cart-item-count mr-3" onclick="changeQuantity('<%=product.ProductDetails[0]._id %>', -1, '<%=product.ProductDetails[0].Quantity%>')">-</button>
+                                                <button class="cart-item-count mr-3" onclick="changeQuantity('<%=product.ProductDetails[0]._id %>', -1, '<%=product.ProductDetails[0].quantity%>')">-</button>
                                                 <span id="<%=product.ProductDetails[0]._id %>"><%= product.quantity %></span>
-                                                <button class="cart-item-count ml-3" onclick="changeQuantity('<%=product.ProductDetails[0]._id %>', 1, '<%=product.ProductDetails[0].Quantity%>')">+</button>
+                                                <button class="cart-item-count ml-3" onclick="changeQuantity('<%=product.ProductDetails[0]._id %>', 1, '<%=product.ProductDetails[0].quantity%>')">+</button>
                                                 
                                             </td>
                                             <td>
@@ -314,12 +314,15 @@
 <script>
 
 function changeQuantity( proId, count, unit) {
+  
+
     
             let proTotal = document.getElementById(proId + 'pro-total').innerHTML;
             let price = document.getElementById(proId + 'price').innerHTML;
             proTotal = parseInt(proTotal);
             price = parseInt(price);
             let quantity = document.getElementById(proId).innerHTML
+    
             
             if (parseInt(quantity) + 1 > unit) {
                 Swal.fire({

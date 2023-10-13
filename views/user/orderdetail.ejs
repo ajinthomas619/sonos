@@ -203,7 +203,7 @@
                                         <th scope="col">Price</th>
                                         <th scope="col">Quantity</th>
                                         <th scope="col">Subtotal</th>
-                                        <th scope="col">Remove</th>
+                                 
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -228,7 +228,7 @@
                                                 <span>₹<%= order[i].quantity * order[i].productDetails[0].saleprice %></span>
                                                 <% sum = sum + order[i].quantity * order[i].productDetails[0].saleprice %>
                                             </td>
-                                            <td class="action" data-title="Remove"><a href="#" class="text-muted"><i class="fi-rs-trash"></i></a></td>
+                            
                                         </tr>
                                     <% } %>
                                 </tbody>

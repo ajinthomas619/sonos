@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const { ObjectId } = require("mongodb");
 const mongodb = require('mongodb')
 
-
 const addToCart = async (req, res) => {
     try {
         // Extracting data from the request body and session
@@ -14,28 +13,23 @@ const addToCart = async (req, res) => {
         const price = parseInt(req.body.price);
         const quantity = 1;
 
-        // Updating user's cart using MongoDB $push operation
-        let userData = await userdata.findByIdAndUpdate(userId, {
-            $push: {
-                cart: {
-                    proId:proId,
-                    price:price,
-                    quantity: quantity,
-                },
-            },
-        });
-        console.log("u d===",userData);
+        // Fetching user data
+        let userData = await userdata.findById(userId);
 
         // Checking if the product already exists in the user's cart
-        const existingItem = userData.cart.find((item) => item.proId === proId);
-        console.log("itemmm===",existingItem);
+        const existingItem = userData.cart.find(item => item.proId === proId);
 
         if (existingItem) {
             existingItem.quantity += quantity;
         } else {
-            userData.cart.push({ proId, quantity });
+            // If the product doesn't exist in the cart, add it
+            userData.cart.push({
+                proId: proId,
+                price: price,
+                quantity: quantity
+            });
         }
-
+        userData.markModified('cart');
         // Saving the updated user data
         await userData.save();
 
@@ -46,6 +40,7 @@ const addToCart = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 const viewCart = async (req, res) => {

@@ -24,31 +24,13 @@
                     <h2 class="content-title card-title">Order List </h2>
                     <p>Lorem ipsum dolor sit amet.</p>
                 </div>
-                <div>
-                    <input type="text" placeholder="Search order ID" class="form-control bg-white">
-                </div>
+                <
             </div>
             <div class="card mb-4">
                 <header class="card-header">
                     <div class="row gx-3">
-                        <div class="col-lg-4 col-md-6 me-auto">
-                            <input type="text" placeholder="Search..." class="form-control">
-                        </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Status</option>
-                                <option>Active</option>
-                                <option>Disabled</option>
-                                <option>Show all</option>
-                            </select>
-                        </div>
-                        <div class="col-lg-2 col-6 col-md-3">
-                            <select class="form-select">
-                                <option>Show 20</option>
-                                <option>Show 30</option>
-                                <option>Show 40</option>
-                            </select>
-                        </div>
+                        
+                        
                     </div>
                 </header> <!-- card-header end// -->
                 <div class="card-body">
@@ -61,66 +43,51 @@
                                     <th scope="col">payment Method</th>
                                     <th scope="col">Total</th>
                                     <th scope="col"></th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col" class="text-end"> Action </th>
+
                                 </tr>
                             </thead>
                            
                             <tbody>
-                                <% if (orders.length > 0) {
-                                    orders.forEach(function(order) { %>
-                                        <tr>
-                                            <td width="40%">
-                                                <a href="#" class="itemside">
-                                                    <div class="left">
-                                                        <img src="/asset/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
-                                                    </div>
-                                                    <div class="info pl-3">
-                                                        <h6 class="mb-0 title"><%= order.customerId %></h6>
-                                                        <small class="text-muted"></small>
-                                                        <td><%= order.paymentStatus %></td>
-                                                        <td><span class="badge rounded-pill alert-success"><%= order.paymentMethod %></span></td>
-
-                                                        <td><%= order.totalAmount %></td>
-
-                                                        <td class="text-end">
-                                                            <a href="/orderdetails/<%=orders[0]._id%>" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
-                                                        </td>
-                                                      
-                                                            <!-- ...other user data columns... -->
-                                                            
-                                                      
-                                                    </div>
-                                                </a>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                    <% });
-                                } else { %>
+                                <% if (orders.length > 0) { %>
+                                  <% for (let i = 0; i < orders.length; i++) { %>
                                     <tr>
-                                        <td colspan="5">orders not Found</td>
+                                      <td width="40%">
+                                        <a href="#" class="itemside">
+                                          <div class="left">
+                                            <img src="/asset/imgs/people/avatar1.jpg" class="img-sm img-avatar" alt="Userpic">
+                                          </div>
+                                          <div class="info pl-3">
+                                            <h6 class="mb-0 title"><%= orders[i].customerId %></h6>
+                                            <small class="text-muted"></small>
+                                          </div>
+                                        </a>
+                                      </td>
+                                      <td><%= orders[i].paymentStatus %></td>
+                                      <td><span class="badge rounded-pill alert-success"><%= orders[i].paymentMethod %></span></td>
+                                      <td><%= orders[i].totalAmount %></td>
+                                      <td class="text-end">
+                                        <a href="/orderdetails/<%= orders[i]._id %>" class="btn btn-sm btn-brand rounded font-sm mt-15">View details</a>
+                                      </td>
                                     </tr>
+                                  <% } %>
+                                <% } else { %>
+                                  <tr>
+                                    <td colspan="5">Orders not Found</td>
+                                  </tr>
                                 <% } %>
-
-
-                            </tbody>
-
+                              </tbody>
+                              
                         </table>
+                        <div class="pagination">
+                          <% for (let j = 1; j <= totalPages; j++) { %>
+                              <a href="?page=<%= j %>" style="margin-right: 10px;"><%= j %></a>
+                          <% } %>
+                      </div>
                     </div> <!-- table-responsive //end -->
                 </div> <!-- card-body end// -->
             </div> <!-- card end// -->
-            <div class="pagination-area mt-15 mb-50">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-start">
-                        <li class="page-item active"><a class="page-link" href="#">01</a></li>
-                        <li class="page-item"><a class="page-link" href="#">02</a></li>
-                        <li class="page-item"><a class="page-link" href="#">03</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">16</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="material-icons md-chevron_right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
+           
+            
         </section> <!-- content-main end// -->
         <footer class="main-footer font-xs">
             <div class="row pb-30 pt-15">

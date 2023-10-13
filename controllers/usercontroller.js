@@ -121,6 +121,19 @@ const loadRegister = async (req, res) => {
 const insertUser = async (req, res) => {
     try {
         const spassword = await securePassword(req.body.password);
+
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(req.body.email)) {
+            return res.render('register', { message: "Invalid email address" });
+        }
+
+        // Validate mobile number using regular expression
+        const mobileRegex = /^[0-9]{10}$/;
+        if (!mobileRegex.test(req.body.mobile)) {
+            return res.render('register', { message: "Invalid mobile number" });
+        }
+
         const User = new user({
             username: req.body.username,
             email: req.body.email,
@@ -132,7 +145,7 @@ const insertUser = async (req, res) => {
         const userData = await User.save();
         if (userData) {
             sendVerifyMail(req.body.name, req.body.email, userData._id);
-            res.render('register', { message: "signup successfull,please verify your mail" });
+            res.render('register', { message: "signup successfull" });
         }
         else {
             res.render('register', { message: "oops signup failed" });
@@ -254,6 +267,14 @@ const loadHome = async (req, res) => {
         }).limit(limit*1)
         .skip((page-1)*limit)
         .exec()
+
+
+        let errorMessage = null;
+
+        if (!products || products.length === 0) {
+            // Set an error message when no products are found.
+            errorMessage = 'No products found';
+        }
         const count = await Product.find({
             $or:[
                 {productname:{$regex:'.*'+search+'.*'}}
@@ -266,7 +287,7 @@ const loadHome = async (req, res) => {
         console.log(userData)
         //  console.log(categories);
         res.render('home', { categories: categories, products: products, user: userData ,
-        totalPages : Math.ceil(count/limit),currentPage:page,banner:banners})
+        totalPages : Math.ceil(count/limit),currentPage:page,banners:banners, errorMessage: errorMessage})
 
     }
     catch (error) {
@@ -497,18 +518,26 @@ const loadShopProduct = async (req, res) => {
 
 const loadAccount = async (req, res) => {
     try {
+        const pageNumber = parseInt(req.query.page) || 1; // Get page number from query parameter, default to 1 if not provided
+        const pageSize = 10; // Number of items per page
 
         const User = await user.findById(req.session.user_id);
-        const orders = await Order.find({ customerId: req.session.user_id });
-        console.log('user ==' + User);
-        console.log('user address = ' + User.address.length);
-        res.render('account', { user: User, orders: orders })
+        const totalOrders = await Order.countDocuments({ customerId: req.session.user_id });
+        const totalPages = Math.ceil(totalOrders / pageSize);
 
+        const orders = await Order.find({ customerId: req.session.user_id })
+            .sort({ createdAt: -1 }) // Sort by createdAt field in descending order (recent first)
+            .skip((pageNumber - 1) * pageSize) // Skip records based on page number
+            .limit(pageSize); // Limit the number of records per page
+
+        res.render('account', { user: User, orders: orders, totalPages: totalPages, currentPage: pageNumber });
+
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send("Internal Server Error");
     }
-    catch (error) {
-        console.log(error.message)
-    }
-}
+};
+
 
 
 //edit address

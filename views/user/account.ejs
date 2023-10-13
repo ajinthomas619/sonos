@@ -259,6 +259,12 @@
                                                             <% } %>
                                                         </tbody>
                                                     </table>
+                                                    <div class="pagination">
+                                                        <% for (let j = 1; j <= totalPages; j++) { %>
+                                                            <a href="?page=<%= j %>" style="margin-right: 10px;"><%= j %></a>
+                                                        <% } %>
+                                                    </div>
+                                                    
                                                 </div>
                                             </div>
                                         </div>

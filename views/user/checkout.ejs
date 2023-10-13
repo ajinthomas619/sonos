@@ -1184,17 +1184,18 @@
     <script>
   
     $('#paymentform').submit(function(e){
+        
         e.preventDefault();
         var formData = $(this).serialize();
-        console.log("hiiiiiii")
-        console.log(formData);
-        console.log("heyyyyy")
+     
 
         $.ajax({
+        
         url: "/checkout",
         type: "POST",
         data:formData,
         success: function (res) { 
+        
             console.log(res)
             if (res.success && res.payment_method === "online") {
                 var options = {
@@ -1244,7 +1245,7 @@
             payment:payment
         },
         success: function (res){
-            alert(res)
+            
             alert("success");
             window.location.href = '/order-success'
 

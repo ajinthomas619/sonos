@@ -32,29 +32,36 @@ const loadCoupon = async(req,res)=>{
 }
 
 
-const addCoupon = async(req,res)=>{
+const addCoupon = async (req, res) => {
     try {
-        const coupon = new Coupon({
-            couponname : req.body.couponname,
-            discount : req.body.discount,
-            minamount : req.body.minamount,
-            maxdiscount : req.body.maxdiscount,
-            
-
-        });
-        console.log("coupon===",coupon);
-        const couponData =await coupon.save();
-        if(couponData){
-            res.redirect('/admin/coupons')
-        }
-        else{
-           res.staus(500).json({message:'coupons not found'});
-        }
+        const { couponname, discount, minamount, maxdiscount } = req.body;
         
+        // Validate minamount and maxdiscount
+        if (minamount < 500 || discount > 60 ||  minamount < 0 || discount < 0) {
+            return res.status(400).json({ message: 'Invalid minamount or discount value' });
+        }
+
+        const coupon = new Coupon({
+            couponname: couponname,
+            discount: discount,
+            minamount: minamount,
+            maxdiscount: maxdiscount,
+        });
+
+        console.log("coupon===", coupon);
+
+        const couponData = await coupon.save();
+        if (couponData) {
+            res.redirect('/admin/coupons');
+        } else {
+            res.status(500).json({ message: 'Coupon not saved' });
+        }
+
     } catch (error) {
-        console.log(error.message)
+        console.error(error.message);
+        res.status(500).json({ message: 'Internal Server Error' });
     }
-}
+};
 
 
 const blockCoupon =async(req,res)=>{
@@ -121,32 +128,30 @@ const unblockCoupon =async(req,res)=>{
 
 const applyCoupon = async (req, res) => {
     try {
-    
         let { couponname, totalAmount } = req.body;
         console.log("coupon body ====", req.body);
         const coupon = await Coupon.findOne({ couponname });
         console.log('coupon====', coupon);
-        totalAmount =parseFloat(totalAmount)
-      console.log("amt===",totalAmount);
-
+        totalAmount = parseFloat(totalAmount);
+        console.log("amt===", totalAmount);
 
         if (!coupon) {
             return res.status(404).json({ error: 'Coupon not found' });
         }
-        console.log("Total Amount:", totalAmount);
-console.log("Coupon Min Amount:", coupon.minamount);
-console.log("Is totalAmount >= minamount?", totalAmount >= coupon.minamount);
 
+        console.log("Total Amount:", totalAmount);
+        console.log("Coupon Min Amount:", coupon.minamount);
+        console.log("Is totalAmount >= minamount?", totalAmount >= coupon.minamount);
 
         if (totalAmount >= coupon.minamount) {
-            let discountedAmount = totalAmount - (totalAmount * coupon.discount) / 100;
+            let discountedAmount =(totalAmount * coupon.discount) / 100;
             discountedAmount = Math.min(discountedAmount, coupon.maxdiscount);
+            discountedAmount = Math.max(discountedAmount, 0); // Ensure discountedAmount is not negative
 
-            const GrandTotal =totalAmount -discountedAmount
-
+            const GrandTotal = totalAmount - discountedAmount;
 
             console.log("discounted amount==", discountedAmount);
-            res.status(200).json({ success:true,discountedAmount,GrandTotal });
+            res.status(200).json({ success: true, discountedAmount, GrandTotal });
         } else {
             // If the totalAmount is less than the minimum amount required for the coupon
             res.status(400).json({ error: 'Total amount does not meet the minimum requirement for this coupon' });

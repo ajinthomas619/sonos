@@ -176,14 +176,14 @@ const verifyMail = async (req, res) => {
 const loginLoad = (req, res) => {
     console.log("hjsidfh");
     try {
-        console.log(req.cookies);
+        
         if (req.cookies.email)
          {
-            console.log("1");
+         
             res.render('login', { email: req.cookies.email, password: req.cookies.password ,checkbox: req.cookies.checkbox})
         }
         else {
-            console.log("2");
+         
             res.render('login')
         }
     }
@@ -209,14 +209,14 @@ const verifyLogin = async (req, res) => {
                 }
                 else {
                     req.session.user_id = userData._id;
-                    console.log(req.cookies)
+                    
                     if (req.body.checkbox == 'on') {
                         res.cookie('email',req.body.email);  
                         res.cookie('password',req.body.password);  
                         res.cookie('checkbox',req.body.checkbox);  
                     
                     }
-                    console.log(req.cookies)
+                    
                     res.redirect('/');
                 }
 
@@ -240,7 +240,7 @@ const loadHome = async (req, res) => {
         if(req.query.search){
             search = req.query.search
         }
-        console.log(req.query)
+       
         const query = req.query
         const page = query['page ']; // Use trim() to remove leading/trailing spaces
         // if(!req.query.page){
@@ -250,7 +250,7 @@ const loadHome = async (req, res) => {
         //     console.log("Elseeeeeeeee")
         //     page = req.query.page
         // }
-        console.log("Page NUmber : " , page);
+       
         const limit =5;
       
         const categories = await Category.find({
@@ -282,9 +282,9 @@ const loadHome = async (req, res) => {
         }).countDocuments();
 
         const banners =await banner.find();
-        console.log("banner data ==",banners)
+     
         const userData = await user.findById(req.session.user_id);
-        console.log(userData)
+       
         //  console.log(categories);
         res.render('home', { categories: categories, products: products, user: userData ,
         totalPages : Math.ceil(count/limit),currentPage:page,banners:banners, errorMessage: errorMessage})
@@ -546,7 +546,7 @@ const loadEditAddress = async (req, res) => {
         const addressIndex = req.params.id;
         const User = await user.findById(req.session.user_id);
         const address = User.address[addressIndex];
-        console.log('address details =' + address);
+        
         res.render('editAddress', { address: address, addressIndex: addressIndex });
     }
     catch (error) {
@@ -555,10 +555,10 @@ const loadEditAddress = async (req, res) => {
 }
 const editAddress = async (req, res) => {
     try {
-        console.log(req.body);
+      
         const User = await user.findById(req.session.user_id);
         const addressId = req.body.addressId;
-        console.log(addressId);
+        
         const updatedUser = await user.findOneAndUpdate({
             _id: User._id,
             'address._id': addressId
@@ -581,7 +581,7 @@ const editAddress = async (req, res) => {
 
         );
         if (updatedUser) {
-            console.log('User address updated: ', updatedUser);
+            
             res.redirect('/account')
         }
         else {
@@ -617,9 +617,9 @@ const addAddress = async (req, res) => {
 
 
         }
-        console.log('address load=' + address);
+       
         const User = await user.findById(req.session.user_id);
-        console.log("dsfds===" + User)
+      
         User.address.push(address);
         await User.save();
         res.redirect('account')

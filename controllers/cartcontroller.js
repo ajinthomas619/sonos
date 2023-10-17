@@ -123,7 +123,7 @@ const changeQuantity = async(req,res)=>{
     req.body.count = parseInt(req.body.count);
     req.body.quantity = parseInt(req.body.quantity);
     if(req.body.count == -1 && req.body.quantity == 1){
-        console.log(req.body.proId)
+       
         userdata.updateOne(
             {_id: userId},
             {$pull: {cart: {proId: req.body.proId}}
@@ -176,6 +176,13 @@ const addToWishlist = async (req, res) => {
         const proId = req.body.id
         const price = parseInt(req.body.price)
         const quantity=1;
+
+        const user = await userdata.findById(userId);
+        if (user.wishlist.some(item => item.proId === proId)) {
+            // Product is already in the wishlist, send a response to the client
+            return res.status(400).json({ error: 'Product already in the wishlist' });
+        }
+
         let userData = await userdata.findByIdAndUpdate(userId ,
                     { $push: { wishlist: {proId
                     } } }

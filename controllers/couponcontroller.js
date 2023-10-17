@@ -23,7 +23,7 @@ const loadCoupon = async(req,res)=>{
         const userData = await admin.findById(req.session.admin_id);
         const coupons=await Coupon.find();
         // console.log("coupons",coupons[0].code);
-        console.log("coupons",coupons);
+      
            res.render('coupons',{admin:userData,coupon:coupons})     
          
     } catch (error) {
@@ -48,7 +48,7 @@ const addCoupon = async (req, res) => {
             maxdiscount: maxdiscount,
         });
 
-        console.log("coupon===", coupon);
+       
 
         const couponData = await coupon.save();
         if (couponData) {

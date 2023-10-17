@@ -30,8 +30,7 @@ const loadOrderDetails = async (req, res) => {
         const userData = await admin.findById(req.session.admin_id);
         const categories = await Category.find();
         const orderId = req.params.id;
-        console.log("iddddd", orderId);
-        console.log("sdfds", Product);
+       
        let  oid = new mongoose.Types.ObjectId(orderId)
         const user = await User.findById(req.session.user_id);
 
@@ -58,9 +57,7 @@ const loadOrderDetails = async (req, res) => {
             }
         ]);
 
-        console.log("orderrr", order);
-        console.log("dsjlfnds===");
-        console.log(order[0].productDetails);
+     
 
         if (!order || order.length === 0) {
             return res.status(404).send('Order not found');
@@ -94,10 +91,10 @@ const loadPlaceOrder =async(req,res)=>{
     try{
         const user = await User.findOne({_id:req.session.user_id}).populate("cart.proId");
         const userCart =await User.findOne({_id:req.session.user_id});
-        console.log(req.body);
+      
         const categories = await Category.find();
         const coupons=await Coupon.find();
-        console.log('codj==',coupons);
+        
         let oid = new mongoose.Types.ObjectId(req.session.user_id)
         let data = await User.aggregate([
             {$match:{_id:oid}},
@@ -116,13 +113,13 @@ const loadPlaceOrder =async(req,res)=>{
 
 
         ])
-        console.log("dataaaaa==",data[0].ProductDetails[0])
+       
         let GrandTotal = 0
         for(let i=0;i<data.length;i++){
             let qua = parseInt(data[i].quantity);
             GrandTotal = GrandTotal+(qua*parseInt(data[i].ProductDetails[0].saleprice))
         }
-        console.log("Grand total = " , GrandTotal)
+       
         
         res.render('checkout',{
             user:user,
@@ -193,11 +190,14 @@ if(req.body.ordercouponname!=''){
         if (req.body.total >= coupon.minamount) {
              discountedAmount = req.body.total - (req.body.total * coupon.discount) / 100;
             discountedAmount = Math.min(discountedAmount, coupon.maxdiscount);
+            console.log("discount==",discountedAmount);
+            console.log(req.body.total);
 
              GrandTotal =req.body.total -discountedAmount
+             console.log("grand total===",GrandTotal);
 
 
-            console.log("discounted amount==", discountedAmount);
+            
         }
 
     }
@@ -220,10 +220,10 @@ if(req.body.ordercouponname!=''){
         shippingAddress: JSON.parse(req.body.address),
         paymentMethod:req.body.payment_method,
      });
-     console.log("payment option ===",req.body.payment_method);
+     
      const orderSuccess = await order.save();
   
-     console.log("orderrrrr===",order._id);
+     
      const orderId = order._id;
      
      if(orderSuccess){
@@ -235,7 +235,7 @@ if(req.body.ordercouponname!=''){
                 await product.save();
             }
            
-            console.log("updated quantity === ",product.quantity);
+          
         }
         user.cart = user.cart.filter(cartItem => {
             return !cart.cart.some(orderItem => orderItem.productId === cartItem.proId);
@@ -244,7 +244,7 @@ if(req.body.ordercouponname!=''){
         await user.save();
 
         if(req.body.payment_method === 'cod'){
-            console.log("before save === ",order)
+           
             await Order.findByIdAndUpdate({_id :orderId},{$set:{orderStatus:'PLACED'}})
             // res.render('successPage')
             res.status(200).send({
@@ -261,6 +261,7 @@ if(req.body.ordercouponname!=''){
                 currency:"INR",
                 receipt:orderId,
             };
+            console.log("rewsf",options);
         
             razorpay.orders.create(options,(err,order)=>{
                 if(!err){
@@ -299,9 +300,7 @@ if(req.body.ordercouponname!=''){
 
 const verifyPayment = async(req,res)=>{
     try {
-        console.log("idddddd=",req.body.orderId);
-        console.log('idd1===',req.body);
-        console.log("iddd2===",req.body.payment);
+       
         const confirm = await Order.find({_id:new mongoose.Types.ObjectId(req.body.orderId)}).lean();
         if(confirm)
         console.log(confirm);
@@ -315,14 +314,11 @@ const verifyPayment = async(req,res)=>{
 
         hmac.update(req.body.payment.razorpay_order_id + '|' + req.body.payment.razorpay_payment_id);
         hmac = hmac.digest('hex');
-        console.log(hmac);
-        console.log( req.body.payment.razorpay_signature)
-console.log("REACHED THE DESTINATIPON");
+      
 
      if(hmac == req.body.payment.razorpay_signature){
     //if(true){
-        console.log('call comes here');
-        console.log(typeof(req.body.orderId));
+        
         await Order.updateOne({_id:new mongoose.Types.ObjectId(req.body.orderId)},{$set:{paymentStatus : 'RECEIVED',orderStatus :"PLACED"}});
 
 
@@ -363,17 +359,14 @@ const loadOrderList = async(req,res)=>{
         const totalPages = Math.ceil(totalOrders / pageSize);
         const userData = await admin.findById(req.session.admin_id);
         const orderId = req.params.id;
-        console.log("iddddd", orderId)
+        
         const orders = await Order.find()
         .sort({createdAt:-1})
         .skip((pageNumber-1)*pageSize)
         .limit(pageSize);
-        console.log("order var = ",orders);
+      
 
    
-        console.log("pageNumber:", pageNumber);
-        console.log("pageSize:", pageSize);
-        console.log("totalPages:", totalPages);
       
         const user = await User.findById(req.session.user_id);
         if (orders.shippingAddress && orders.shippingAddress.name) {
@@ -399,10 +392,9 @@ const loadOrderDetail = async (req, res) => {
         const userData = await admin.findById(req.session.admin_id);
         const categories = await Category.find();
         const orderId = req.params.id;
-        console.log("iddddd", orderId);
-        console.log("sdfds", Product);
+      
        let  oid = new mongoose.Types.ObjectId(orderId);
-       console.log("oidddd===",oid);
+     
         const user = await User.findById(req.session.user_id);
 
         const order = await Order.aggregate([
@@ -427,8 +419,7 @@ const loadOrderDetail = async (req, res) => {
             }
         ]);
 
-        console.log("orderrr", order);
-        console.log("proooo=====",order[0].productDetails);
+   
   
 
         if (!order || order.length === 0) {
@@ -490,8 +481,7 @@ const printInvoice = async (req, res) => {
         };
       });
   
-      console.log("product");
-      console.log(product);
+   
       var data = {
         //   "images": {
         //       "logo": "/assets/imgs/theme/logo1.png"
@@ -543,8 +533,7 @@ const printInvoice = async (req, res) => {
         },
       };
   
-      console.log("data");
-      console.log(data);
+    
   
       res.json(data);
     } catch (error) {

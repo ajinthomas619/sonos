@@ -15,7 +15,7 @@ const newProductLoad = async (req, res) => {
         
         const userData = await admin.findById(req.session.admin_id);
         const categoryData = await Category.find()
-        console.log(categoryData)
+        
         res.render('addproduct',{categories:categoryData,admin:userData});
     } catch (error) {
         console.log(error.message);
@@ -26,7 +26,7 @@ const addProduct = async (req, res) => {
     try {
         const userData = await admin.findById(req.session.admin_id);
         const categoryData = await Category.findOne({ categoryname: req.body.category });
-        console.log("dsfsd", categoryData);
+       
         const Filenames = req.files.map((file) => file.filename);
 
         // Validate the product price
@@ -49,14 +49,14 @@ const addProduct = async (req, res) => {
             brand: req.body.brand
         });
 
-        console.log(product);
+      
         const productData = await product.save();
-        console.log(productData);
+     
         if (productData) {
             res.redirect('productlist');
         } else {
             const categoryData = await Category.find();
-            console.log(categoryData.name);
+           
             res.render('addproduct', { message: 'Something went wrong', categories: categoryData, admin: userData });
         }
     } catch (error) {
@@ -83,7 +83,7 @@ const editProductLoad = async (req, res) => {
         const productData = await Product.findById( { _id: new ObjectId(id.trim())  }).populate(
             "category")
         
-         console.log(productData)
+        
         // console.log(categoryData)
         if (productData) {
             res.render('editproduct', { products: productData,categories:categoryData ,admin:userData});
@@ -156,7 +156,7 @@ const updateProduct = async (req, res) => {
 const deleteProduct = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id);
+       
         await Product.findByIdAndDelete({ _id: new ObjectId(id.trim()) });
         res.redirect('/productlist')
     }
@@ -186,9 +186,9 @@ const addCategory = async (req, res) => {
             image: image
 
         });
-        console.log(category)
+       
         const categoryData = await category.save();
-        console.log(categoryData)
+      
         if (categoryData) {
             res.redirect('/categories');
         }
@@ -206,9 +206,9 @@ const editCategoryLoad = async (req, res) => {
     try {
         const userData = await admin.findById(req.session.admin_id);
         const id = req.params.id;
-        console.log(id)
+       
         const categoryData = await Category.findById({ _id: new ObjectId(id.trim()) }).lean();
-        console.log(categoryData)
+       
         if (categoryData) {
             res.render('editcategories', { categories: categoryData,admin:userData });
         } else {
@@ -222,12 +222,12 @@ const editCategoryLoad = async (req, res) => {
 const updateCategory = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id)
+      
         const updateData = {
             categoryname: req.body.productname,
             description: req.body.description,
         };
-        console.log(updateData)
+        
         if (req.file) {
             updateData.image = req.file.filename;
         }
@@ -235,7 +235,7 @@ const updateCategory = async (req, res) => {
             updateData.image = req.file.filename;
         }
         const updatedCategory = await Category.findByIdAndUpdate({ _id: new ObjectId(id.trim()) }, { $set: updateData }, { new: true });
-        console.log(updatedCategory)
+       
 
         if (!updatedCategory) {
             return res.status(404).json({ message: 'Product not found' });
@@ -252,7 +252,7 @@ const updateCategory = async (req, res) => {
 const deleteCategory = async (req, res) => {
     try {
         const id = req.params.id;
-        console.log(id);
+        
         await Category.findByIdAndDelete({ _id: new ObjectId(id.trim()) });
         res.redirect('/categories')
     }

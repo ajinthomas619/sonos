@@ -20,7 +20,7 @@ const loadBanner = async(req,res)=>{
     try{
     const userData = await admin.findById(req.session.admin_id);
     const banners =await banner.find();
-    console.log("banner===",banners);
+  
     res.render('banners',{admin:userData,banner:banners});
     }
     catch(error){
@@ -40,7 +40,7 @@ const addBanner = async(req,res)=>{
 
         }) 
         const bannerschema = await bannerdata.save();
-        console.log("bannerdaat===",bannerschema)
+     
         if(bannerschema){
             res.redirect('/admin/banners')
         }
@@ -55,7 +55,7 @@ const addBanner = async(req,res)=>{
 }
 const deleteBanner =async(req,res)=>{
     try{
-        console.log(req.params)
+      
     const id = req.params.id;
     console.log(id);
     await banner.findByIdAndDelete({_id:new ObjectId(id.trim())});

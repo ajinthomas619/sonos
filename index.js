@@ -1,5 +1,5 @@
 const mongoose=require("mongoose");
-mongoose.connect("mongodb://127.0.0.1:27017/sonos",{
+mongoose.connect("mongodb+srv://ajinthomas619:Motog31@cluster0.u9qv5iq.mongodb.net/",{
 useNewUrlParser: true,
 useUnifiedTopology:true
 });

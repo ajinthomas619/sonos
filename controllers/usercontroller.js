@@ -284,7 +284,8 @@ const loadHome = async (req, res) => {
         const banners =await banner.find();
      
         const userData = await user.findById(req.session.user_id);
-       
+        console.log("userdataa===",userData);
+    
         //  console.log(categories);
         res.render('home', { categories: categories, products: products, user: userData ,
         totalPages : Math.ceil(count/limit),currentPage:page,banners:banners, errorMessage: errorMessage})
@@ -530,7 +531,28 @@ const loadAccount = async (req, res) => {
             .skip((pageNumber - 1) * pageSize) // Skip records based on page number
             .limit(pageSize); // Limit the number of records per page
 
-        res.render('account', { user: User, orders: orders, totalPages: totalPages, currentPage: pageNumber });
+            const walletResult = await user.aggregate([
+                { $match : { _id : User._id} },
+                { $unwind : "$wallet" },
+                { $group : { "_id": null ,
+                 "balance" : {"$sum":"$wallet.amount"} ,
+                }
+            }
+        ]).exec();
+        console.log(walletResult);
+
+          let walletBalance;
+          if(walletResult && walletResult.length>0){
+            walletBalance = walletResult[0].balance.toLocaleString("en-IN",{
+                style:"currency",
+                 currency: "INR",
+                });
+                console.log("wallet Balance ==",walletBalance);
+          }else{
+            console.log("mo wallet balance found");
+          }
+
+        res.render('account', { user: User, orders: orders, totalPages: totalPages, currentPage: pageNumber ,walletBalance:walletBalance});
 
     } catch (error) {
         console.log(error.message);

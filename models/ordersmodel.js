@@ -70,7 +70,14 @@ const orderData = mongoose.Schema({
     },
     netTotal:{
         type:Number
+    },
+    deliveredOn:{
+        type: Date
+    },
+    returnReason:{
+        type: String
     }
+
     
 }
 

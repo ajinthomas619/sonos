@@ -1,6 +1,6 @@
 const mongoose=require("mongoose");
 var id=new mongoose.Types.ObjectId();
-
+const moment = require('moment-timezone');
 
 const addressData = new mongoose.Schema({
     name: {
@@ -72,7 +72,22 @@ cart:{
 wishlist:{
     type:Array
 },
-address:[addressData]
+address:[addressData],
+
+wallet: [{
+  orderId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'order'
+  },
+  transactionType: String,
+  amount: Number,
+  remarks: String,
+  createdOn: {
+    type: Date,
+    default: () => moment.tz(Date.now(), "Asia/Kolkata")
+  }
+
+}]
 
 
 });

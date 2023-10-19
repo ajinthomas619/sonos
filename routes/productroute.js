@@ -103,6 +103,7 @@ product_route.post('/verify-payment',orderController.verifyPayment);
 product_route.get('/orderlist',orderController.loadOrderList);
 product_route.get('/orderdetails/:id',orderController.loadOrderDetail);
 product_route.post('/print-invoice',orderController.printInvoice);
+product_route.post('/return',orderController.returnProduct);
 
 
 

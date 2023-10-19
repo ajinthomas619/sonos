@@ -6,6 +6,7 @@ const Category = require("../models/categorymodel");
 const bcrypt = require('bcrypt');
 
 const config = require("../config/config");
+const doc = require("pdfkit");
 
 
 const loadLogin = async(req,res)=>{
@@ -244,6 +245,79 @@ const unblockuser =async(req,res)=>{
     }
 }
 
+const generateReport = async(req,res)=>{
+    try{
+    let orders = await Order.find().populate('products.proId');
+    const PDFDOcument =  require('pdfkit');
+    const doc = new PDFDOcument({size:'letter',margin:50});
+    doc.pipe(res);
+    doc.fontSize(20).text('Sales Report',{align:'center'});
+    doc.moveDown();
+
+    const headers = [
+        'Index',
+        'Date',
+        'Order Id',
+        'Quantity',
+        'Total',
+        'Discount',
+        
+    ];
+    const colWidths = [35,90,170,50,70,70,70];
+    const rowHeight = 40;
+    const cellPadding = (rowHeight-12)/2;
+    let x =50;
+    let y = doc.y;
+    headers.forEach((header,index)=>{
+        doc
+        .font('Helvetica-Bold')
+        .fontSize(12)
+        .text(header, x,y+cellPadding,{width:colWidths[index],align:'center'});
+        x+=colWidths[index];
+    });
+    let currentPageY = y+rowHeight;
+    orders.forEach((order,index)=>{
+        const total = order.totalAmount;
+        const discount = order.discount || 0;
+        const orderId = order._id;
+        const date = String(order.createdAt).slice(4,16);
+        
+        order.products.forEach((product)=>{
+            const quantity = product.quantity;
+            const finalPrice = total - discount;
+
+            const rowData = [
+                index+1,
+                date,
+                orderId,
+                quantity,
+                finalPrice
+            ];
+            console.log(rowData);
+            x=50;
+            currentPageY += rowHeight;
+            if(currentPageY + rowHeight > doc.page.height-50){
+                doc.addPage();
+                currentPageY = 50;
+
+        }
+        rowData.forEach((value,index)=>{
+            doc.font('Helvetica').fontSize(12).text(value.toString(),x,currentPageY+cellPadding,{
+                width:colWidths[index] , align : 'center'} );
+                doc.rect(x,currentPageY,colWidths[index],rowHeight).stroke();
+                x +=colWidths[index];
+            });
+        });
+        
+      } );
+      doc.end();
+    }
+    catch(error){
+        console.log(error.message);
+    }
+}
+       
+    
 
 
 
@@ -254,6 +328,7 @@ loadDashboard,
 logout,
 adminDashboard,
 blockuser,
-unblockuser
+unblockuser,
+generateReport
 
 }

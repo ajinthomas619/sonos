@@ -178,6 +178,7 @@ const checkout = async(req,res)=>{
 
      const cart = await User.findById(req.session.user_id, {cart:1});
     // console.log(cart.cart);
+    
   
     Object.freeze(cart);
      console.log("req n===",req.body);
@@ -203,6 +204,35 @@ if(req.body.ordercouponname!=''){
     }
 
 }
+const walletResult = await User.aggregate([
+    {
+        $match:{_id:user._id},
+        
+    },
+    {
+        $unwind:"$wallet",
+    },
+    {
+        $group:{
+            _id:null,
+            totalAmount:{$sum:"$wallet.amount"},
+        },
+    },
+]).exec();
+
+let walletBalance;
+if(walletResult && walletResult.length>0){
+    walletBalance = walletResult[0].totalAmount.toLocaleString("en-IN",{
+        style:'currency',
+        currency:'INR',
+    });
+    console.log("Total Amount in Wallet:",walletBalance);
+}
+else{
+    console.log("No Wallet Transcations Was Found");
+}
+req.session.returnTo1 = "/checkout";
+console.log("walletout",walletBalance);
 
 
 
@@ -246,7 +276,7 @@ if(req.body.ordercouponname!=''){
         if(req.body.payment_method === 'cod'){
            
             await Order.findByIdAndUpdate({_id :orderId},{$set:{orderStatus:'PLACED'}})
-            // res.render('successPage')
+             res.render('successPage')
             res.status(200).send({
                 success:true,
                 payment_method: req.body.payment_method            
@@ -288,6 +318,39 @@ if(req.body.ordercouponname!=''){
                     res.status(400).send({success:false,msg:"Something went wrong!"});
                 }
             })
+        }
+        else if(req.body.payment_method === "wallet"){
+            console.log(walletResult[0].totalAmount);
+            console.log(order.totalAmount);
+            if(walletResult[0].totalAmount<order.totalAmount){
+                console.log("wallet balance exceeded");
+                res.status(200).json({
+                    loadWalletBalance:true,
+                    message:'bill amount exceed wallet balance'
+                })
+            }
+            else{
+                let transaction = {
+                    orderId:orderId,
+                    amount: -order.totalAmount,
+                    transactionType:"DEBIT",
+                    remarks:"CHECKOUT",
+                };
+                user.wallet.push(transaction);
+                await user.save();
+                await Order.updateOne(
+                    {_id: new mongoose.Types.ObjectId(orderId)},
+                    {
+                        $set:{
+                            orderStatus:"PLACED",
+                            paymentStatus:"RECIEVED"
+                        }
+                    }
+                   
+                );
+                res.render('successPage')
+            
+            }
         }
     
         }
@@ -333,24 +396,95 @@ const verifyPayment = async(req,res)=>{
         res.status(500).json({status:false, msg: 'Internal Server Error'});
     }
 }
-const cancelOrder = async(req,res)=>{
+const cancelOrder = async (req, res) => {
     try {
+        const orderId = req.params.id;
 
-        const orderId  =req.params.id;
-        let  oid = new mongoose.Types.ObjectId(orderId)
-        console.log("iddd candds ==",oid);
-        const update = {
-            orderStatus : 'CANCELLED'
+        // Fetch the order and check if it has already been cancelled
+        const order = await Order.findOne({ _id: orderId, orderStatus: { $ne: 'CANCELLED' } });
+
+        if (!order) {
+            // Order has already been cancelled or doesn't exist, send a response indicating that
+            return res.status(200).send('Order is already cancelled or does not exist.');
         }
-        const order = await Order.findByIdAndUpdate(oid,update);
-        console.log("updated order===",order);
+
+        // Update order status to 'CANCELLED'
+        order.orderStatus = 'CANCELLED';
+        await order.save();
+
+        // Fetch the user
+        const user = await User.findById(req.session.user_id);
+
+        // Add transaction to user's wallet
+        const transaction = {
+            orderId: order._id,
+            amount: order.totalAmount,
+            transactionType: "CREDIT",
+            remarks: "CANCELLED",
+        };
+        user.wallet.push(transaction);
+        await user.save();
+
+        // Restore product quantities
+        const updatePromises = order.products.map(async (orderItem) => {
+            const product = await Product.findById(orderItem.productId);
+            if (product) {
+                product.quantity += orderItem.quantity;
+                await product.save();
+            }
+        });
+
+        // Wait for all asynchronous operations to complete before redirecting
+        await Promise.all(updatePromises);
+
         res.redirect('/account');
-
     } catch (error) {
-        console.log(error.message)
+        console.log(error.message);
+        res.status(500).send('Internal Server Error');
     }
-}
+};
 
+
+
+const returnProduct = async(req,res) =>{
+    try{
+        console.log(req.body);
+        const reason = req.body.reason;
+        const id =req.body.id;
+        const order = await Order.findById({
+            _id:mongoose.Types.ObjectId(id),
+        });
+        await Order.findByIdAndUpdate(
+            {_id:mongoose.Types.ObjectId(id)},
+            {$set:{returnReason:reason,orderStatus:"RETURNED"}}
+
+        ).lean();
+        const user =await User.findById(req.session.user_id);
+        if(order){
+            for(const orderItem of order.products){
+                const product =await Product.findById(orderItem.productId);
+                if(product){
+                    product.quantity -= orderItem.quantity;
+                    await product.save();
+                    
+                }
+        }
+        let transaction = {
+            orderId:order._id,
+            amount:order.totalAmount,
+            transactionType:"CREDIT",
+            remarks:"RETURNED",
+        };
+        user.wallet.push(transaction);
+        await user.save();
+    }
+    return res.status(200).json({success:true});
+}
+catch(error){
+    console.log(error.message);
+    return res.status(500).json({status:"error",msg:"Cannot Return Product"});
+}
+}
 const loadOrderList = async(req,res)=>{
     try{
         const pageNumber = parseInt(req.query.page) || 1; 
@@ -550,6 +684,7 @@ module.exports={
     checkout,
     verifyPayment,
     cancelOrder,
+    returnProduct,
     loadOrderList,
     loadOrderDetail,
     printInvoice

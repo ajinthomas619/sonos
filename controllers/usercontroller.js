@@ -284,7 +284,7 @@ const loadHome = async (req, res) => {
         const banners =await banner.find();
      
         const userData = await user.findById(req.session.user_id);
-        console.log("userdataa===",userData);
+       
     
         //  console.log(categories);
         res.render('home', { categories: categories, products: products, user: userData ,
@@ -539,7 +539,7 @@ const loadAccount = async (req, res) => {
                 }
             }
         ]).exec();
-        console.log(walletResult);
+       
 
           let walletBalance;
           if(walletResult && walletResult.length>0){

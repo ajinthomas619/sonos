@@ -177,7 +177,7 @@ const checkout = async(req,res)=>{
      const user = await User.findById(userId);
 
      const cart = await User.findById(req.session.user_id, {cart:1});
-    // console.log(cart.cart);
+     console.log(cart.cart);
     
   
     Object.freeze(cart);
@@ -257,8 +257,11 @@ console.log("walletout",walletBalance);
      const orderId = order._id;
      
      if(orderSuccess){
+        await User.updateOne({ _id: userId }, { $unset: { cart: 1 } });
         for(const cartItem of user.cart){
+        
             const product = await Product.findById(cartItem.proId);
+          
        
             if(product){
                 product.quantity -= cartItem.quantity;
@@ -266,22 +269,26 @@ console.log("walletout",walletBalance);
             }
            
           
-        }
+        
         user.cart = user.cart.filter(cartItem => {
+          
             return !cart.cart.some(orderItem => orderItem.productId === cartItem.proId);
         });
+        }
 
         await user.save();
 
         if(req.body.payment_method === 'cod'){
            
-            await Order.findByIdAndUpdate({_id :orderId},{$set:{orderStatus:'PLACED'}})
-             res.render('successPage')
-            res.status(200).send({
-                success:true,
-                payment_method: req.body.payment_method            
-            });
-
+            await Order.findByIdAndUpdate({_id :orderId},{$set:{orderStatus:'PLACED'}});
+            res.status(200).json({
+                status: true,
+                msg: "Order created for COD",
+                orderId: orderId
+              });
+            console.log("cod successfull");
+          
+          
         }
         else if(req.body.payment_method === "online"){
           
@@ -348,7 +355,14 @@ console.log("walletout",walletBalance);
                     }
                    
                 );
-                res.render('successPage')
+                res.status(200).json({
+                    status: true,
+                    msg: 'order created using wallet',
+                    orderId: orderId
+                  })
+        
+                console.log("walletpayment successfull");
+              
             
             }
         }
@@ -675,6 +689,36 @@ const printInvoice = async (req, res) => {
     }
   };
 
+  const changeStatus = async(req,res) => {
+    try{
+        console.log("status===",req.body.status);
+        const id  = req.body.id;
+        const order = await Order.findById(id);
+        console.log("order details===",order);
+        await Order.findByIdAndUpdate(id,{orderStatus:req.body.status});
+        if(req.body.status === "Delivered"){
+            await Order.findByIdAndUpdate(id,{deliveredOn:new Date()});
+    }
+    else if(req.body.status === "CANCELLED"){
+        if(order){
+            for(const orderItem of order.products){
+                const product = await Product.findById(orderItem.proId);
+                if(product){
+                    product.quantity += orderItem.quantity;
+                    await product.save()
+
+                }
+            }
+        }
+    }
+    res.redirect(`/orderdetails/${id}`);
+
+  }
+  catch(error){
+    console.log(error.message);
+  }
+}
+
 
 
 module.exports={
@@ -687,7 +731,8 @@ module.exports={
     returnProduct,
     loadOrderList,
     loadOrderDetail,
-    printInvoice
+    printInvoice,
+    changeStatus
   
     
 }

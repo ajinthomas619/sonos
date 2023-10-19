@@ -104,7 +104,7 @@ product_route.get('/orderlist',orderController.loadOrderList);
 product_route.get('/orderdetails/:id',orderController.loadOrderDetail);
 product_route.post('/print-invoice',orderController.printInvoice);
 product_route.post('/return',orderController.returnProduct);
-
+product_route.post('/change-status/:id',orderController.changeStatus)
 
 
 module.exports = product_route;

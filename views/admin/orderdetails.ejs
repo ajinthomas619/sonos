@@ -33,6 +33,21 @@
                   <span class="icon icon-sm rounded-circle bg-primary-light">
                     <i class="text-primary material-icons md-place"></i>
                   </span>
+                  <form action="/change-status/<%=order[0]._id%>" method="post">
+                    <span>Order Status: </span>
+                    <!-- Debug Statement -->
+                  
+                  
+                    <select aria-placeholder="Order Status" class="form-select d-inline-block mb-lg-0 mb-15 mw-200" name="status">
+                      <option <%if(order[0].orderStatus.trim()=== "PENDING") { %> selected <% } %> value="PENDING">PENDING</option>
+                        <option <%if(order[0].orderStatus.trim()=== "PLACED") { %> selected <% } %> value="PLACED">PLACED</option>
+                        <option <%if(order[0].orderStatus.trim()=== "CANCELLED") { %> selected <% } %> value="CANCELLED">CANCELLED</option>
+                        <option <%if(order[0].orderStatus.trim()=== "DELIVERED") { %> selected <% } %> value="DELIVERED">DELIVERED</option>
+                    </select>
+                    <input type="hidden" name="id"  value="<%=order[0]._id%>">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <!-- <a class="btn btn-primary" href="#">Save</a> -->
+                  </form>      
                  <!-- Address Section -->
 <div class="row">
   <div class="col-md-4">
@@ -55,6 +70,8 @@
     <% } %>
   </div>
 </div>
+
+
 
                 </article>
               </div>
@@ -97,8 +114,22 @@
                             <td>₹ <%= order[i].productDetails[j].saleprice %></td>
                             <td><%= order[i].quantity %></td>
                             <td>
-                              ₹ <%= order[i].productDetails[j].price * order[i].quantity %>
+                              <% 
+                              const price = parseFloat(order[i].productDetails[j].saleprice);
+                              const quantity = parseInt(order[i].quantity);
+                              
+                              // Check if price and quantity are valid numbers
+                              if (!isNaN(price) && !isNaN(quantity)) {
+                                const totalPrice = price * quantity;
+                                // Output the total price
+                                %> ₹ <%= totalPrice %> 
+                              <% } else {
+                                // Handle invalid data (e.g., display an error message)
+                                %> Invalid Price or Quantity <% 
+                              }
+                              %>
                             </td>
+                            
                           </tr>
                         <% } %>
                       <% } %>
@@ -170,10 +201,13 @@
             </div>
           </div>
         </div>
+      
+      
         <!-- card end// -->
       </section>
       <!-- content-main end// -->
-
+        
+ 
       <footer class="main-footer font-xs">
         <div class="row pb-30 pt-15">
           <div class="col-sm-6">

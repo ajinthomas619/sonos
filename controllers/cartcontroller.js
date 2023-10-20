@@ -118,41 +118,44 @@ const viewCart = async (req, res) => {
 //     }
 
 // }
-const changeQuantity = async(req,res)=>{
+const changeQuantity = async (req, res) => {
     const userId = req.session.user_id;
     req.body.count = parseInt(req.body.count);
     req.body.quantity = parseInt(req.body.quantity);
-    if(req.body.count == -1 && req.body.quantity == 1){
-       
+
+    if (req.body.count === -1 && req.body.quantity === 1) {
+        // If count is -1 (decreasing quantity) and quantity is already 1, remove the product from the cart
         userdata.updateOne(
-            {_id: userId},
-            {$pull: {cart: {proId: req.body.proId}}
-        }
-        ).then((status)=>{
-            console.log(status)
-            res.json({status:true})
-        })
-    }else{
-        const oid = new mongodb.ObjectId(userId)
+            { _id: userId },
+            { $pull: { cart: { proId: req.body.proId } } }
+        ).then((status) => {
+            console.log(status);
+            res.json({ status: true });
+        });
+    } else {
+        // If count is not -1 or quantity is not 1, update the quantity
+        const oid = new mongodb.ObjectId(userId);
+        const updatedQuantity = req.body.count > 0 ? req.body.count : 1; // Ensure quantity doesn't go below 1
+
         userdata.updateOne(
             {
-              _id:oid,
-               'cart.proId': req.body.proId,
+                _id: oid,
+                'cart.proId': req.body.proId,
             },
             {
-              $inc: {
-                'cart.$.quantity': req.body.count,
-              }
+                $set: {
+                    'cart.$.quantity': updatedQuantity,
+                },
             },
             {
-                new:true
+                new: true,
             }
-        ).then((status)=>{
-            console.log("COunt incc====>",status);
-            res.json({status:false})
-        })
-        }
-    }
+        ).then((status) => {
+            console.log("Count incremented ===>", status);
+            res.json({ status: false });
+        });
+    }
+};
 
 
 const removeFromCart = async (req, res) => {

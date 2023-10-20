@@ -122,7 +122,14 @@ const insertUser = async (req, res) => {
     try {
         const spassword = await securePassword(req.body.password);
 
-
+        const usernameRegex = /\S+/;
+        const passwordRegex = /\S+/;
+        if (!usernameRegex.test(req.body.username)) {
+            return res.render('register', { message: "Username must contain characters apart from spaces" });
+        }
+        if (!passwordRegex.test(req.body.password)) {
+            return res.render('register', { message: "Password must contain characters apart from spaces" });
+        }
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(req.body.email)) {
             return res.render('register', { message: "Invalid email address" });

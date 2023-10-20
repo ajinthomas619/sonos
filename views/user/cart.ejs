@@ -249,11 +249,7 @@
                             </table>
                             
                         </div>
-                        <div class="cart-action text-end">
-                            <a class="btn  mr-10 mb-sm-15" href="/updateCartItem"><i class="fi-rs-shuffle mr-10"></i>Update Cart</a>
-                            <a class="btn "><i class="fi-rs-shopping-bag mr-10"></i>Continue Shopping</a>
-                        </div>
-                      
+                   
                                
                    
                             <div class="col-lg-6 col-md-12">
@@ -313,58 +309,53 @@
 
 <script>
 
-function changeQuantity( proId, count, unit) {
-  
+function changeQuantity(proId, count, unit) {
+    let proTotal = parseInt(document.getElementById(proId + 'pro-total').innerHTML);
+    let price = parseInt(document.getElementById(proId + 'price').innerHTML);
+    let quantity = parseInt(document.getElementById(proId).innerHTML);
 
-    
-            let proTotal = document.getElementById(proId + 'pro-total').innerHTML;
-            let price = document.getElementById(proId + 'price').innerHTML;
-            proTotal = parseInt(proTotal);
-            price = parseInt(price);
-            let quantity = document.getElementById(proId).innerHTML
-    
-            
-            if (parseInt(quantity) + 1 > unit) {
-                Swal.fire({
-                    title: 'STOCK!',
-                    text: 'Product is out of stock.',
-                    icon: 'error',
-                    timer: 5000
-                })
-            } else {
-                if (count == 1) {
-                    document.getElementById(proId + 'pro-total').innerHTML = proTotal + price
-                    price = document.getElementById(proId + 'price').innerHTML;
-                    let GrandTotal = document.getElementById('grand-total').innerHTML
-                    document.getElementById('grand-total').innerHTML = parseInt(GrandTotal) + parseInt(price);
+    if (quantity <= 1 && count === -1) {
+        // Display error message or handle the situation where the quantity is already 1 and trying to decrease it further
+        Swal.fire({
+            title: 'Minimum Quantity Reached!',
+            text: 'Quantity cannot be less than 1.',
+            icon: 'error',
+            timer: 5000
+        });
+    } else if (quantity + count > unit) {
+        // Display out of stock message
+        Swal.fire({
+            title: 'STOCK!',
+            text: 'Product is out of stock.',
+            icon: 'error',
+            timer: 5000
+        });
+    } else {
+        document.getElementById(proId + 'pro-total').innerHTML = proTotal + count * price;
+        let GrandTotal = parseInt(document.getElementById('grand-total').innerHTML);
+        document.getElementById('grand-total').innerHTML = GrandTotal + count * price;
+        document.getElementById(proId).innerHTML = quantity + count;
+
+        $.ajax({
+            url: "/changeQuantity",
+            method: 'post',
+            data: {
+                proId: proId,
+                count: count,
+                quantity: quantity,
+            },
+            success: (response) => {
+                if (response.status == true) {
+                    location.reload();
                 } else {
-                    document.getElementById(proId + 'pro-total').innerHTML = proTotal - price
-                    price = document.getElementById(proId + 'price').innerHTML;
-                    let GrandTotal = document.getElementById('grand-total').innerHTML
-                    document.getElementById('grand-total').innerHTML = parseInt(GrandTotal) - parseInt(price);
+                    let total = quantity + count;
+                    document.getElementById(proId).innerHTML = total;
                 }
+            }
+        });
+    }
+}
 
-                $.ajax({
-                    url: "/changeQuantity",
-                    method: 'post',
-                    data: {
-                        proId: proId,
-                        count: count,
-                        quantity: quantity,
-                    },
-                    success: (response) => {
-                        if (response.status == true) {
-                             location.reload();
-
-                        } else {
-                            let total = parseInt(quantity) + parseInt(count);
-                            document.getElementById(proId).innerHTML = total;
-                        }
-                    }
-                })
-            }
-
-        }
 
 
 

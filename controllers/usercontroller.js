@@ -633,6 +633,26 @@ const loadAddress = async (req, res) => {
 
 const addAddress = async (req, res) => {
     try {
+        const nameRegex = /\S+/;
+        const stateRegex = /\S+/;
+        const cityRegex = /\S+/;
+        const addressline1Regex = /\S+/;
+        const addressline2Regex = /\S+/;
+        if (!nameRegex.test(req.body.name)) {
+            return res.render('addAddress', { message: "name must contain characters apart from spaces" });
+        }
+        if (!stateRegex.test(req.body.state)) {
+            return res.render('addAddress', { message: "State must contain characters apart from spaces" });
+        }
+        if (!cityRegex.test(req.body.state)) {
+            return res.render('addAddress', { message: "city must contain characters apart from spaces" });
+        }
+        if (!addressline1Regex.test(req.body.addressLine1)) {
+            return res.render('addAddress', { message: "address must contain characters apart from spaces" });
+        }
+        if (!addressline2Regex.test(req.body.addressLine2)) {
+            return res.render('addAddress', { message: "adress details must contain characters apart from spaces" });
+        }
         const address = {
             name: req.body.name,
             addressLine1: req.body.addressLine1,

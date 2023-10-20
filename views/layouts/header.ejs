@@ -7,7 +7,7 @@
                         <div class="header-info">
                             <ul>
                                 <li><i class="fi-rs-smartphone"></i> <a href="#">(+01) - 2345 - 6789</a></li>
-                                <li><i class="fi-rs-marker"></i><a  href="page-contact.html">Our location</a></li>
+                                <li><i class="fi-rs-marker"></i><a  href="/">Our location</a></li>
                             </ul>
                         </div>
                     </div>
@@ -15,9 +15,9 @@
                         <div class="text-center">
                             <div id="news-flash" class="d-inline-block">
                                 <ul>
-                                    <li>Get great devices up to 50% off <a href="shop-grid-right.html">View details</a></li>
+                                    <li>Get great devices up to 50% off <a href="/">View details</a></li>
                                     <li>Supper Value Deals - Save more with coupons</li>
-                                    <li>Trendy 25silver jewelry, save up 35% off today <a href="shop-grid-right.html">Shop now</a></li>
+                                    <li>Trendy 25silver jewelry, save up 35% off today <a href="/">Shop now</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -140,57 +140,44 @@
                     <div class="hotline d-none d-lg-block">
                         <p><i class="fi-rs-headset"></i><span>Hotline</span> 1900 - 888 </p>
                     </div>
-                    <p class="mobile-promotion">Happy <span class="text-brand">Mother's Day</span>. Big Sale Up to 40%</p>
+                    <div class="header-info header-info-right">
+                        <ul>
+                            
+                            <% if(user) {%>
+                                <% }else {%>
+                                    <li><i class="fi-rs-user"></i><a href="/register">Sign Up</a></li>
+                                    <%}%>
+
+                                        <% if(user) {%>
+                                            <li><i class="fi-rs-user"></i><a href="#">
+                                                    <%=user.username%>
+                                                </a>
+                                                <ul class="language-dropdown">
+                                                    <li><a href="/account">Account</a></li>
+                                               
+                                               
+                                                </ul>
+                                            </li>
+
+                                            <%}else{%>
+                                                <li><i class="fi-rs-user"></i><a href="/login">Log In</a></li>
+
+                                                <%}%>
+                        </ul>
+                    </div>
                     <div class="header-action-right d-block d-lg-none">
                         <div class="header-action-2">
                             <div class="header-action-icon-2">
-                                <a href="shop-wishlist.html">
+                                <a href="/wishlist">
                                     <img alt="Evara" src="/assets/imgs/theme/icons/icon-heart.svg">
                                     <span class="pro-count white">4</span>
                                 </a>
                             </div>
                             <div class="header-action-icon-2">
-                                <a class="mini-cart-icon" href="shop-cart.html">
+                                <a class="mini-cart-icon" href="/cart">
                                     <img alt="Evara" src="/assets/imgs/theme/icons/icon-cart.svg">
                                     <span class="pro-count white">2</span>
                                 </a>
-                                <div class="cart-dropdown-wrap cart-dropdown-hm2">
-                                    <ul>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Evara" src="/assets/imgs/shop/thumbnail-3.jpg"></a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Plain Striola Shirts</a></h4>
-                                                <h3><span>1 × </span>$800.00</h3>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                        <li>
-                                            <div class="shopping-cart-img">
-                                                <a href="shop-product-right.html"><img alt="Evara" src="/assets/imgs/shop/thumbnail-4.jpg"></a>
-                                            </div>
-                                            <div class="shopping-cart-title">
-                                                <h4><a href="shop-product-right.html">Macbook Pro 2022</a></h4>
-                                                <h3><span>1 × </span>$3500.00</h3>
-                                            </div>
-                                            <div class="shopping-cart-delete">
-                                                <a href="#"><i class="fi-rs-cross-small"></i></a>
-                                            </div>
-                                        </li>
-                                    </ul>
-                                    <div class="shopping-cart-footer">
-                                        <div class="shopping-cart-total">
-                                            <h4>Total <span>$383.00</span></h4>
-                                        </div>
-                                        <div class="shopping-cart-button">
-                                            <a href="shop-cart.html">View cart</a>
-                                            <a href="shop-checkout.html">Checkout</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                             <div class="header-action-icon-2 d-block d-lg-none">
                                 <div class="burger-icon burger-icon-white">

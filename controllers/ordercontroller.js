@@ -184,6 +184,13 @@ const checkout = async(req,res)=>{
      console.log("req n===",req.body);
      let GrandTotal = req.body.total;
      let discountedAmount = 0;
+     if (GrandTotal <= 0) {
+        // If total amount is zero or negative, do not create the order
+        return res.status(400).json({
+            status: false,
+            msg: "Invalid total amount. Order cannot be placed with zero or negative total amount."
+        });
+    }
 
 if(req.body.ordercouponname!=''){
     const coupon = await Coupon.findOne({ couponname:req.body.ordercouponname });

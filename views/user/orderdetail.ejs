@@ -264,9 +264,9 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    <% if (order.orderStatus === "DELIVERED") { %>
+                                    <% if (order[0].orderStatus === "DELIVERED") { %>
                                         <a class="btn btn-primary m-5" data-bs-toggle="modal" data-bs-target="#reasonModal" data-bs-title="Cancel" data-bs-route="/order-cancel/<%= order[0]._id %>" data-bs-orderid="<%= order[0]?._id %>">RETURN ORDER</a>
-                                    <% } else if (order.orderStatus !== "CANCELLED" && order.orderStatus !== "RETURNED") { %>
+                                    <% } else if (order[0].orderStatus !== "CANCELLED" && order[0].orderStatus !== "RETURNED") { %>
                                         <a class="btn btn-primary m-5" onclick="cancelOrder()">CANCEL ORDER</a>
                                     <% } %>                                  
                                       <button onclick="invoice('<%=order[0]._id%>')"> print</button>
@@ -490,7 +490,7 @@
         const id = document.getElementById('orderId').value;
         const reason = document.getElementById('reason').value;
         try{
-            $ajax({
+            $.ajax({
                 url:'/return',
                 method:'POST',
                 data:{
@@ -507,7 +507,7 @@
                             confirmButtonText:"OK"
                         }).then((result)=>{
                             if(result.isConfirmed){
-                                window,location.href="/order-details/<%=order[0]._id%>"
+                                window.location.href="/orderdetail/<%=order[0]._id%>"
                             }
                         })
                     }

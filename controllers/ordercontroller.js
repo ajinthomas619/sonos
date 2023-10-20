@@ -466,10 +466,10 @@ const returnProduct = async(req,res) =>{
         const reason = req.body.reason;
         const id =req.body.id;
         const order = await Order.findById({
-            _id:mongoose.Types.ObjectId(id),
+            _id:new mongoose.Types.ObjectId(id),
         });
         await Order.findByIdAndUpdate(
-            {_id:mongoose.Types.ObjectId(id)},
+            {_id:new mongoose.Types.ObjectId(id)},
             {$set:{returnReason:reason,orderStatus:"RETURNED"}}
 
         ).lean();

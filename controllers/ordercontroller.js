@@ -167,7 +167,12 @@ const loadPlaceOrder =async(req,res)=>{
 //     }
 // }
 const orderSuccess = (req, res)=>{
-res.render('successPage');
+try{
+    res.render('successPage');
+}
+catch{
+    console.log(error.message);
+}
 }
 
 
@@ -289,11 +294,8 @@ console.log("walletout",walletBalance);
         if(req.body.payment_method === 'cod'){
            
             await Order.findByIdAndUpdate({_id :orderId},{$set:{orderStatus:'PLACED'}});
-            res.status(200).json({
-                status: true,
-                msg: "Order created for COD",
-                orderId: orderId
-              });
+            console.log("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii");
+           res.status(200).send({success1:true});
             console.log("cod successfull");
           
           
@@ -363,18 +365,14 @@ console.log("walletout",walletBalance);
                     }
                    
                 );
-                res.status(200).json({
-                    status: true,
-                    msg: 'order created using wallet',
-                    orderId: orderId
-                  })
+                res.status(200).send({success2:true});
         
                 console.log("walletpayment successfull");
               
             
             }
         }
-    
+       
         }
     }
     catch(error){

@@ -343,7 +343,10 @@
                     alert("Payment Failed");
                 });
                 razorpayObject.open();
-            } else if (res.success && res.payment_method === "cod") {
+            } else if (res.success1 ) {
+                window.location.href = '/order-success'
+            } 
+            else if (res.success2 ) {
                 window.location.href = '/order-success'
             } else {
                 alert(res.msg);

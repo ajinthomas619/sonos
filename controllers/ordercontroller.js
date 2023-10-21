@@ -113,6 +113,7 @@ const loadPlaceOrder =async(req,res)=>{
 
 
         ])
+        console.log("fuuuu==",data);
        
         let GrandTotal = 0
         for(let i=0;i<data.length;i++){

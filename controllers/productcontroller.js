@@ -97,29 +97,30 @@ const editProductLoad = async (req, res) => {
 
 const updateProduct = async (req, res) => {
     try {
-        console.log("body:-",req.body)
-        
-        console.log("fileee:-")
+        console.log("body:-", req.body);
+        console.log("fileee:-");
         console.log(req.files);
+
         const userData = await admin.findById(req.session.admin_id);
-      
-        const quantity =parseFloat(req.body.quantity)
+        const quantity = parseFloat(req.body.quantity);
         const regularPrice = parseFloat(req.body.regularprice);
         const salePrice = parseFloat(req.body.saleprice);
-        if (isNaN(regularPrice) || isNaN(salePrice) || isNaN(quantity) || regularPrice < 10 || salePrice < 10 || quantity<1) {
+
+        if (isNaN(regularPrice) || isNaN(salePrice) || isNaN(quantity) || regularPrice < 10 || salePrice < 10 || quantity < 1) {
             const categoryData = await Category.find();
-          
             return res.render('addproduct', { message: 'Invalid data', categories: categoryData, admin: userData });
         }
-     const imageFilenames = req.files.map(file=>file.filename);
-     console.log("image file :-",imageFilenames)
-     const categoryData = await Category.findOne({categoryname:req.body.category});
-   
-          
-     console.log("dsfkdaefd",categoryData)
-        const id = req.params.id;
 
-        console.log("iddd:-",id)
+        const imageFilenames = req.files.map(file => file.filename);
+        const categoryData = await Category.findOne({ categoryname: req.body.category });
+
+        const id = req.params.id.trim();
+        const existingProduct = await Product.findById(id);
+
+        if (!existingProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
         const updateData = {
             productname: req.body.productname,
             description: req.body.description,
@@ -127,30 +128,28 @@ const updateProduct = async (req, res) => {
             saleprice: req.body.saleprice,
             category: categoryData.categoryname,
             quantity: req.body.quantity,
-            brand:req.body.brand
-
+            brand: req.body.brand,
+            image: existingProduct.image // Preserve existing images if new images are not provided in the update
         };
-        console.log("updated dataa:-",updateData)
-        
-        if (req.files) {
-            console.log("sdfdsfds",req.files)
+
+        if (req.files && req.files.length > 0) {
+            // If new files are provided, update the image field
             updateData.image = imageFilenames;
-            console.log("update ====",updateData.image)
         }
 
-        const updatedProduct = await Product.findByIdAndUpdate({ _id: new ObjectId(id.trim()) }, { $set: updateData }, { new: true });
-        console.log(updatedProduct)
+        const updatedProduct = await Product.findByIdAndUpdate(id, updateData, { new: true });
 
         if (!updatedProduct) {
             return res.status(404).json({ message: 'Product not found' });
         }
 
-        res.redirect('/productlist');
+        res.redirect('/productlist'); // Redirect to product list page after successful update
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
         res.status(500).json({ message: 'An error occurred' });
     }
 };
+
 //delete products
 
 const deleteProduct = async (req, res) => {

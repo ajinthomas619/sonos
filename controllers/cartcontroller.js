@@ -122,40 +122,39 @@ const changeQuantity = async (req, res) => {
     const userId = req.session.user_id;
     req.body.count = parseInt(req.body.count);
     req.body.quantity = parseInt(req.body.quantity);
+    const proId = req.body.proId;
 
-    if (req.body.count === -1 && req.body.quantity === 1) {
-        // If count is -1 (decreasing quantity) and quantity is already 1, remove the product from the cart
-        userdata.updateOne(
+    const user = await userdata.findOne({ _id: userId });
+
+    const existingProduct = user.cart.find(product => product.proId === proId);
+    
+    if (existingProduct) {
+        // Product is already in the cart, update quantity
+        const updatedQuantity = Math.max(existingProduct.quantity + req.body.count, 1); // Ensure quantity doesn't go below 1
+
+        await userdata.updateOne(
+            { _id: userId, 'cart.proId': proId },
+            { $set: { 'cart.$.quantity': updatedQuantity } }
+        );
+        
+        console.log("Count updated ===>", updatedQuantity);
+        res.json({ status: false });
+    } else if (req.body.count !== -1 || req.body.quantity !== 1) {
+        // Product is not in the cart, add it with the specified quantity
+        await userdata.updateOne(
             { _id: userId },
-            { $pull: { cart: { proId: req.body.proId } } }
-        ).then((status) => {
-            console.log(status);
-            res.json({ status: true });
-        });
-    } else {
-        // If count is not -1 or quantity is not 1, update the quantity
-        const oid = new mongodb.ObjectId(userId);
-        const updatedQuantity = req.body.count > 0 ? req.body.count : 1; // Ensure quantity doesn't go below 1
+            { $push: { cart: { proId: proId, quantity: Math.max(req.body.quantity, 1) } } }
+        );
 
-        userdata.updateOne(
-            {
-                _id: oid,
-                'cart.proId': req.body.proId,
-            },
-            {
-                $set: {
-                    'cart.$.quantity': updatedQuantity,
-                },
-            },
-            {
-                new: true,
-            }
-        ).then((status) => {
-            console.log("Count incremented ===>", status);
-            res.json({ status: false });
-        });
+        console.log("Product added to cart ===>", proId);
+        res.json({ status: false });
+    } else {
+        // Product is not in the cart, and quantity is already 1, do nothing or handle the case as needed
+        console.log("Product not in cart or quantity is already 1");
+        res.json({ status: true });
     }
 };
+
 
 
 const removeFromCart = async (req, res) => {
